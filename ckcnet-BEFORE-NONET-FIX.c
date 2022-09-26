@@ -1,9 +1,9 @@
-char *cknetv = "Network support, 10.0.299, 26 Sep 2022";
+char *cknetv = "Network support, 9.0.297, 14 Jul 2011";
 
 /*  C K C N E T  --  Network support  */
 
 /*
-  Copyright (C) 1985, 2022,
+  Copyright (C) 1985, 2011,
     Trustees of Columbia University in the City of New York.
     All rights reserved.  See the C-Kermit COPYING.TXT file or the
     copyright text in the ckcmai.c module for disclaimer and permissions.
@@ -47,12 +47,6 @@ char *cknetv = "Network support, 10.0.299, 26 Sep 2022";
     Stephen Riehm added support for IBM AIX X.25 in April 1998.
   Other contributions as indicated in the code.
 */
-#ifdef NORLOGIN
-#ifdef RLOGCODE
-#undef RLOGCODE
-#endif  /* RLOGCODE */
-#endif  /* NORLOGIN */
-
 #define CKCNET_C
 #include "ckcsym.h"
 #include "ckcdeb.h"
@@ -263,7 +257,6 @@ struct timezone {
 #endif /* CK_ANSIC */
 #endif /* OSF13 */
 
-#ifndef OS2
 #ifndef I386IX
 #ifndef HPUXPRE65
 #include <errno.h>			/* Error number symbols */
@@ -273,23 +266,6 @@ struct timezone {
 #endif	/* ERRNO_INCLUDED */
 #endif	/* HPUXPRE65 */
 #endif /* I386IX */
-#endif /* OS2 */
-
-#ifdef OS2
-#ifdef NT
-#include <errno.h>			/* Error number symbols */
-#else /* OS/2 */
-#ifdef __WATCOMC__
-/*
-  WatcomC doesn't need errno.h
-  (definitions conflict with some previous definition
-  #include <errno.h>
-*/
-#else
-#include <errno.h>			/* Error number symbols */
-#endif
-#endif /* NT */
-#endif /* OS2 */
 
 #include <signal.h>                     /* Everybody needs this */
 
@@ -387,7 +363,6 @@ _PROTOTYP( int rlog_naws, (void) );
 #ifdef OS2                              /* For terminal type name string */
 #include "ckuusr.h"
 #ifndef NT
-#define INCL_DOSSEMAPHORES
 #include <os2.h>
 #undef COMMENT
 #endif /* NT */
@@ -7138,7 +7113,6 @@ getlocalipaddrs(buf,bufsz,index)
 }
 
 #ifdef RLOGCODE                 /* TCP/IP RLOGIN protocol support code */
-#ifdef CK_NAWS
 int
 rlog_naws() {
     struct rlog_naws {
@@ -7179,10 +7153,8 @@ rlog_naws() {
       return(-1);
     return(0);
 }
-#endif /* CK_NAWS */
 #endif /* NOTCPIP */
 
-#ifndef NORLOGIN
 #ifdef OS2ORUNIX
 #define RLOGOUTBUF
 #endif /* OS2 */
@@ -7441,6 +7413,7 @@ rlog_ini(hostname, port, l_addr, r_addr)
     }
     return(0);
 }
+
 /* two control messages are defined:
 
    a double flag byte of 'o' indicates a one-byte message which is
@@ -7567,7 +7540,6 @@ rlogoobh(sig) int sig; {
 }
 #endif /* TCPIPLIB */
 #endif /* RLOGCODE */
-#endif /* NORLOGIN */
 
 /* Send network BREAK */
 /*
@@ -10222,8 +10194,7 @@ http_security()
         const char *cipher_list;
         static char buf[128];
         buf[0] = NUL;
-        /* cast added by fdc 26 September 2022 */
-        cipher = (SSL_CIPHER *)SSL_get_current_cipher(tls_http_con);
+        cipher = SSL_get_current_cipher(tls_http_con);
         cipher_list = SSL_CIPHER_get_name(cipher);
         SSL_CIPHER_description(cipher,buf,sizeof(buf));
         return(buf);
@@ -11787,7 +11758,7 @@ http_get(agent, hdrlist, user, pwd, array, local, remote, stdio)
                 if ( stdio )
                     conoc((CHAR)ch);
             }
-            if ((ch = http_inc(0)) != CK_CR)
+            if ((ch = http_inc(0)) != CR)
                 break;
             if ((ch = http_inc(0)) != LF)
                 break;
@@ -12254,7 +12225,7 @@ http_index(agent, hdrlist, user, pwd, array, local, remote, stdio)
                 if ( stdio )
                     conoc((CHAR)ch);
             }
-            if ((ch = http_inc(0)) != CK_CR)
+            if ((ch = http_inc(0)) != CR)
                 break;
             if ((ch = http_inc(0)) != LF)
                 break;
@@ -12559,7 +12530,7 @@ http_put(agent, hdrlist, mime, user, pwd, array, local, remote, dest, stdio)
                     if ( stdio )
                         conoc((CHAR)ch);
                 }
-                if ((ch = http_inc(0)) != CK_CR)
+                if ((ch = http_inc(0)) != CR)
                     break;
                 if ((ch = http_inc(0)) != LF)
                     break;
@@ -12805,7 +12776,7 @@ http_delete(agent, hdrlist, user, pwd, array, remote)
                 len--;
                 conoc((CHAR)ch);
             }
-            if ((ch = http_inc(0)) != CK_CR)
+            if ((ch = http_inc(0)) != CR)
                 break;
             if ((ch = http_inc(0)) != LF)
                 break;
@@ -13088,7 +13059,7 @@ http_post(agent, hdrlist, mime, user, pwd, array, local, remote, dest,
                     if ( stdio )
                         conoc((CHAR)ch);
                 }
-                if ((ch = http_inc(0)) != CK_CR)
+                if ((ch = http_inc(0)) != CR)
                     break;
                 if ((ch = http_inc(0)) != LF)
                     break;
@@ -14472,3 +14443,5 @@ fwdx_thread( VOID * dummy )
 #endif /* CK_FORWARD_X */
 #endif /* TNCODE */
 #endif /* NETCONN */
+
+
