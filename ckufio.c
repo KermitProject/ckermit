@@ -7379,7 +7379,8 @@ zshcmd(s) char *s;
 #ifdef CK_CHILD
         int child;                      /* Child's exit status */
 #endif /* CK_CHILD */
-        SIGTYP (*istat)(), (*qstat)();
+	sig_t istat;
+	sig_t qstat;
 
         if (pid == (PID_T) -1) return(-1); /* fork() failed? */
 

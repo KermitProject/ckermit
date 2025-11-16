@@ -547,7 +547,7 @@ dologin(cmdstr) char *cmdstr;
 #ifdef OS2
     SIGTYP (* savealm)(int);		/* Save incoming alarm function */
 #else /* OS2 */
-    SIGTYP (*savealm)();		/* Save incoming alarm function */
+    sig_t savealm;		/* Save incoming alarm function */
 #endif /* OS2 */
     char *e;
 
