@@ -1289,23 +1289,23 @@ static int gotsigs = 0;
 
 static time_t tcount = (time_t)0;	/* Elapsed time counter */
 
-static SIGTYP (*saval)()     = NULL;	/* For saving alarm() handler */
-static SIGTYP (*savquit)()   = NULL;	/* and other signal handlers */
+static sig_t saval;	/* For saving alarm() handler */
+static sig_t savquit;	/* and other signal handlers */
 #ifdef SIGUSR1
-static SIGTYP (*savusr1)()   = NULL;
+static sig_t savusr1;
 #endif /* SIGUSR1 */
 #ifdef SIGUSR2
-static SIGTYP (*savusr2)()   = NULL;
+static sig_t savusr2;
 #endif /* SIGUSR2 */
 #ifdef SIGPIPE
-static SIGTYP (*savpipe)()   = NULL;
+static sig_t savpipe;
 #endif /* SIGPIPE */
 #ifdef SIGDANGER
-static SIGTYP (*savdanger)() = NULL;
+static sig_t savdanger;
 #endif /* SIGDANGER */
 
 #ifndef NOJC
-static SIGTYP (*jchdlr)()    = NULL;	/* For checking suspend handler */
+static sig_t jchdlr;	/* For checking suspend handler */
 #endif /* NOJC */
 static int jcshell = -1;		/* And flag for result */
 
@@ -1717,7 +1717,7 @@ xtimerh(foo) int foo;
 /* Control-C trap for communication line input functions */
 
 int cc_int;				/* Flag */
-SIGTYP (* occt)();			/* For saving old SIGINT handler */
+sig_t occt;			/* For saving old SIGINT handler */
 
 /*ARGSUSED*/
 SIGTYP
@@ -9769,7 +9769,7 @@ conbgt(flag) int flag;
 */
     if (x < 0 && !flag && !sigint_ign) { /* Didn't get good results above... */
 
-	SIGTYP (*osigint)();
+	sig_t osigint;
 
 	osigint = signal(SIGINT,SIG_IGN);	/* What is SIGINT set to? */
 	sigint_ign = 1;
@@ -14967,7 +14967,7 @@ pty_get_status(fd,pid) int fd; PID_T pid;
 */
 static int have_pty = 0;		/* Do we have a pty? */
 
-static SIGTYP (*save_sigchld)() = NULL;	/* For catching SIGCHLD */
+static sig_t save_sigchld;	/* For catching SIGCHLD */
 
 static VOID
 #ifdef CK_ANSIC
@@ -15856,7 +15856,8 @@ external protocols over secure connections not supported in this OS.\n"
 	debug(F101,"ttruncmd system",s,x);
 	_exit(x ? BAD_EXIT : 0);
     } else {
-	SIGTYP (*istat)(), (*qstat)();
+	sig_t istat;
+	sig_t qstat;
 	if (pid == (PID_T) -1)		/* fork() failed? */
 	  return(0);
 	istat = signal(SIGINT,SIG_IGN); /* Let the fork handle keyboard */

@@ -2612,7 +2612,7 @@ transmit(s,t,xlate,binary,xxecho) char *s; char t; int xlate, binary, xxecho;
 #ifdef OS2
     SIGTYP (* oldsig)(int);             /* For saving old interrupt trap. */
 #else /* OS2 */
-    SIGTYP (* oldsig)();
+    sig_t oldsig;
 #endif /* OS2 */
 #endif /* MAC */
     int eof = 0;                        /* End of File flag */
@@ -3299,7 +3299,7 @@ xlate(fin, fout, csin, csout) char *fin, *fout; int csin, csout;
     extern unsigned char colorcmd;
     SIGTYP (* oldsig)(int);             /* For saving old interrupt trap. */
 #else /* OS2 */
-    SIGTYP (* oldsig)();
+    sig_t oldsig;
 #endif /* OS2 */
 #endif /* MAC */
 #ifdef CK_ANSIC
