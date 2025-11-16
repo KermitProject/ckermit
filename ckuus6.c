@@ -4074,7 +4074,7 @@ dotype(file, paging, first, head, pat, width, prefix, incs, outcs, outfile, z)
     SIGTYP (* volatile oldsig)(int);
 #endif /* NT */
 #else /* OS2 */
-    SIGTYP (* oldsig)();
+    __sighandler_t oldsig;
 #endif /* OS2 */
 #endif /* MAC */
 

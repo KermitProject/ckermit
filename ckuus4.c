@@ -2617,7 +2617,7 @@ transmit(s,t,xlate,binary,xxecho) char *s; char t; int xlate, binary, xxecho;
 #endif /* NT */
 
 #else /* OS2 */
-    SIGTYP (* oldsig)();
+    __sighandler_t oldsig;
 #endif /* OS2 */
 #endif /* MAC */
     int eof = 0;                        /* End of File flag */
@@ -3308,7 +3308,7 @@ xlate(fin, fout, csin, csout) char *fin, *fout; int csin, csout;
     SIGTYP (* volatile oldsig)(int);    /* For saving old interrupt trap. */
 #endif /* NT */
 #else /* OS2 */
-    SIGTYP (* oldsig)();
+    __sighandler_t oldsig;
 #endif /* OS2 */
 #endif /* MAC */
 #ifdef CK_ANSIC
