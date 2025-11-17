@@ -1008,12 +1008,11 @@ char * ftp_apw = NULL;			/* Anonymous password */
   that C-Kermit's ckupty.c function ptyint_vhangup() calls it...  how did
   *that* happen?).
 */
-#define sigtype SIGTYP
 
 #ifdef CK_ANSIC
-typedef sigtype (*sig_t)(int);
+typedef SIGTYP (*sig_t)(int);
 #else
-typedef sigtype (*sig_t)();
+typedef SIGTYP (*sig_t)();
 #endif /* CK_ANSIC */
 
 /* Made this global static -fdc 21 June 2023 */
@@ -1068,9 +1067,9 @@ static int sendrequest( char *, char *, char *, int, int, int, int );
 static int syncdir( char *, int );
 static int tmcompare( struct tm *, struct tm * );
 static int xlatec( int, int, int, int );
-static sigtype cancelrecv( int );
-static sigtype cancelsend( int );
-static sigtype cmdcancel( int );
+static SIGTYP cancelrecv( int );
+static SIGTYP cancelsend( int );
+static SIGTYP cmdcancel( int );
 
 #endif  /* CK_ANSIC */
 
@@ -2023,7 +2022,7 @@ _PROTOTYP(static VOID lostpeer, (void));
 _PROTOTYP(static VOID cancel_remote, (int));
 _PROTOTYP(static VOID changetype, (int, int));
 
-_PROTOTYP(static sigtype cmdcancel, (int));
+_PROTOTYP(static SIGTYP cmdcancel, (int));
 
 #ifdef FTP_SRP
 _PROTOTYP(static int srp_reset, ());
@@ -10817,7 +10816,7 @@ ssl_auth() {
 }
 #endif /* CK_SSL */
 
-static sigtype
+static SIGTYP
 #ifdef CK_ANSIC
 cmdcancel( int sig )
 #else
@@ -11773,7 +11772,7 @@ empty(mask, cnt, sec) int * mask, sec;
 #endif /* IBMSELECT */
 #endif /* BSDSELECT */
 
-static sigtype
+static SIGTYP
 #ifdef CK_ANSIC
 cancelsend( int sig )
 #else
@@ -12539,7 +12538,7 @@ sendrequest( cmd, local, remote, xlate, incs, outcs, restart )
     return(ftpsndret);
 }
 
-static sigtype
+static SIGTYP
 #ifdef CK_ANSIC
 cancelrecv( int sig )
 #else
@@ -13938,7 +13937,7 @@ dataconn(lmode) char *lmode;
 }
 
 #ifdef FTP_PROXY
-static sigtype
+static SIGTYP
 pscancel(sig) int sig; {
     cancelfile++;
 }
@@ -14064,7 +14063,7 @@ pswitch(flag) int flag; {
     }
 }
 
-static sigtype
+static SIGTYP
 #ifdef CK_ANSIC
 cancelpt( int sig )
 #else
@@ -14089,7 +14088,7 @@ proxtrans(cmd, local, remote, unique) char *cmd, *local, *remote; int unique; {
 #ifdef BSDSELECT
     fd_set mask;
 #endif /* BSDSELECT */
-    sigtype cancelpt();
+    SIGTYP cancelpt();
 
     if (strcmp(cmd, "RETR"))
       cmd2 = "RETR";
@@ -17837,7 +17836,7 @@ ftp_mput(argc, argv) int argc; char **argv; {
     register int i;
     int ointer;
     char *tp;
-    sigtype mcancel();
+    SIGTYP mcancel();
 
     if (argc < 2 && !another(&argc, &argv, "local-files")) {
         printf("usage: %s local-files\n", argv[0]);
@@ -17956,7 +17955,7 @@ ftp_mget(argc, argv) int argc; char **argv; {
     int rc = -1;
     int ointer;
     char *cp, *tp, *tp2, tmpbuf[CKMAXPATH];
-    sigtype mcancel();
+    SIGTYP mcancel();
 
     if (argc < 2 && !another(&argc, &argv, "remote-files")) {
         printf("usage: %s remote-files\n", argv[0]);
@@ -18015,7 +18014,7 @@ static int
 mdelete(argc, argv) int argc; char **argv; {
     int ointer;
     char *cp;
-    sigtype mcancel();
+    SIGTYP mcancel();
 
     if (argc < 2 && !another(&argc, &argv, "remote-files")) {
         printf("usage: %s remote-files\n", argv[0]);
@@ -18055,7 +18054,7 @@ static int
 mls(argc, argv) int argc; char **argv; {
     int ointer, i;
     char *cmd, mode[1], *dest;
-    sigtype mcancel();
+    SIGTYP mcancel();
     int rc = -1;
 
     if (argc < 2 && !another(&argc, &argv, "remote-files"))
