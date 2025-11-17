@@ -544,11 +544,7 @@ dologin( char *cmdstr )
 dologin(cmdstr) char *cmdstr;
 #endif /* CK_ANSIC */
 {
-#ifdef OS2
-    SIGTYP (* savealm)(int);		/* Save incoming alarm function */
-#else /* OS2 */
     sig_t savealm;		/* Save incoming alarm function */
-#endif /* OS2 */
     char *e;
 
     s = cmdstr;				/* Make global to this module */
