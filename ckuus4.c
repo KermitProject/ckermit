@@ -3297,10 +3297,8 @@ xlate(fin, fout, csin, csout) char *fin, *fout; int csin, csout;
     extern int k95stdout;
     extern int wherex[], wherey[];
     extern unsigned char colorcmd;
-    SIGTYP (* oldsig)(int);             /* For saving old interrupt trap. */
-#else /* OS2 */
-    sig_t oldsig;
 #endif /* OS2 */
+    sig_t oldsig;
 #endif /* MAC */
 #ifdef CK_ANSIC
     int (*fn)(char);                    /* Output function pointer */
