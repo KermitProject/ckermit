@@ -1800,6 +1800,12 @@ _PROTOTYP(int ckxfprintf,(FILE *, const char *, ...));
 #define SIGRETURN return(0)
 #endif /* SIGRETURN */
 
+#ifdef CK_ANSIC
+typedef SIGTYP (*sig_t)(int);
+#else
+typedef SIGTYP (*sig_t)();
+#endif /* CK_ANSIC */
+
 #ifdef CKNTSIG
 /* This does not work, so don't use it. */
 #define signal ckntsignal
