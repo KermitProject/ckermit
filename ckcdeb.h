@@ -1806,12 +1806,6 @@ typedef SIGTYP (*sig_t)(int);
 typedef SIGTYP (*sig_t)();
 #endif /* CK_ANSIC */
 
-#ifdef CKNTSIG
-/* This does not work, so don't use it. */
-#define signal ckntsignal
-SIGTYP (*ckntsignal(int type, SIGTYP (*)(int)))(int);
-#endif /* CKNTSIG */
-
 /* We want all characters to be unsigned if the compiler supports it */
 
 #ifdef KUI
