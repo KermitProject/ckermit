@@ -1801,8 +1801,16 @@ _PROTOTYP(int ckxfprintf,(FILE *, const char *, ...));
 #endif /* SIGRETURN */
 
 #ifdef CK_ANSIC
+#ifdef OS2
+#ifdef NT
 typedef SIGTYP (*sig_t)(int);
-#else
+#else /* !NT */
+typedef SIGTYP (volatile *sig_t)(int);
+#endif /* NT */
+#else /* !OS2 */
+typedef SIGTYP (*sig_t)(int);
+#endif /* OS2 */
+#else /* !CK_ANSIC */
 typedef SIGTYP (*sig_t)();
 #endif /* CK_ANSIC */
 

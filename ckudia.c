@@ -4456,13 +4456,8 @@ char fbuf[FULLNUML];
 
 static ckjmpbuf sjbuf;
 
-#ifdef CK_ANSIC
-static SIGTYP (*savalrm)(int);	/* For saving alarm handler */
-static SIGTYP (*savint)(int);	/* For saving interrupt handler */
-#else
-static SIGTYP (*savalrm)();	/* For saving alarm handler */
-static SIGTYP (*savint)();	/* For saving interrupt handler */
-#endif /* CK_ANSIC */
+static sig_t savalrm;	/* For saving alarm handler */
+static sig_t savint;	/* For saving interrupt handler */
 
 #ifdef CKLOGDIAL
 static VOID
