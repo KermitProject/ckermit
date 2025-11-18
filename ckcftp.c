@@ -951,7 +951,7 @@ int ftp_log = 1;                        /* FTP Auto-login */
 int sav_log = -1;
 int ftp_action = 0;                     /* FTP action from command line */
 int ftp_dates = 1;                      /* Set file dates from server */
-int ftp_xfermode = XMODE_A;		/* FTP-specific transfer mode */
+int ftp_xfermode = XMODE_M;		/* FTP-specific transfer mode */
 
 char ftp_reply_str[FTP_BUFSIZ] = "";    /* Last line of previous reply */
 char ftp_srvtyp[SRVNAMLEN] = { NUL, NUL }; /* Server's system type */

@@ -1408,7 +1408,7 @@ int deblog = 0,                         /* Debug log is open */
     cursor_save = -1,                   /* Cursor state */
 #endif /* OS2 */
 
-    xfermode = XMODE_A,                 /* Transfer mode, manual or auto */
+    xfermode = XMODE_M,                 /* Transfer mode, manual or auto */
     xfiletype = -1,                     /* Transfer only text (or binary) */
     recursive = 0,                      /* Recursive directory traversal */
     nolinks   = 2,                      /* Don't follow symbolic links */
