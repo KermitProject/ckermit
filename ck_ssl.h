@@ -39,8 +39,8 @@
 #include <openssl/comp.h>
 #endif /* OPENSSL_NO_COMP */
 #endif /* ZLIB */
-/* We place the following to avoid loading openssl/mdc2.h since it 
- * relies on the OpenSSL des.h.  Since we do not need the MDC2 
+/* We place the following to avoid loading openssl/mdc2.h since it
+ * relies on the OpenSSL des.h.  Since we do not need the MDC2
  * definitions there is no reason to have it included by openssl/evp.h
  */
 #define OPENSSL_NO_MDC2

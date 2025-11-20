@@ -172,12 +172,12 @@ extern int eofmethod;
 #ifndef BSD44
 #ifndef V7
 /* Not sure why this is here.  What it implies is that the code bracketed
-   by SYSUTIMEH is valid on all platforms on which we support time 
+   by SYSUTIMEH is valid on all platforms on which we support time
    functionality.  But we know that is not true because the BSD44 and V7
    platforms do not support sys/utime.h and the data structures which
    are defined in them.  Now this worked before because prior to today's
    changes the UTIMEH definition for BSD44 and V7 did not take place
-   until after SYSUTIMEH was defined.  It also would not have been a 
+   until after SYSUTIMEH was defined.  It also would not have been a
    problem if the ordering of all the time blocks was consistent.  All but
    one of the blocks were BSD44, V7, SYSUTIMEH, <OTHER>.  That one case
    is where this problem was triggered.
@@ -595,10 +595,10 @@ _PROTOTYP( struct passwd * getpwent, (void) );
 #endif /* __APPLE__ */
 
 #ifdef SOLARIS
-#define PAM_CONST 
+#define PAM_CONST
 #else /* SOLARIS */
 #define PAM_CONST CONST
-#endif 
+#endif
 
 static char * pam_pw = NULL;
 
@@ -1636,7 +1636,7 @@ zopeno(n,name,zz,fcb) int n; char *name; struct zattr *zz; struct filinfo *fcb;
         }
 	debug(F111,"zopeno open flags",name,flags);
 	fd = open(name,O_WRONLY|flags,0600);
-	debug(F111,"zopeno open",name,fd); 
+	debug(F111,"zopeno open",name,fd);
 	if (fd > -1) {
 	    if (isatty(fd)) {
 		filefd = fd;
@@ -2722,7 +2722,7 @@ zchko(name) char *name;
 	debug(F111,"zchko open mode",name,flags);
 	/* Must attempt to open it so isatty() can be used */
         fd = open(name,O_WRONLY|O_CREAT|flags,0600);
-	debug(F111,"zchko open",name,fd); 
+	debug(F111,"zchko open",name,fd);
 	if (fd > -1) {			/* to get a file descriptor */
 	    if (isatty(fd))		/* for isatty() */
 	      istty++;
@@ -3464,7 +3464,7 @@ zxcmd(filnum,comand) int filnum; char *comand;
         if (priv_chk()) {
 	    debug(F100,"zxcmd priv_chk failed","",0);
             return(0);
-	}	
+	}
 	errno = 0;
         fp[filnum] = popen(comand,"w");
 	debug(F111,"zxcmd popen",fp[filnum] ? "OK" : "Failed", errno);
@@ -3693,7 +3693,7 @@ zclosf(filnum) int filnum; {
 
   Depends on external variable wildxpand: 0 means we expand wildcards
   internally, nonzero means we call the shell to do it.
-  
+
   AND in C-Kermit 8.0.212 and later, on extern wildena: 1 means wildcards
   are enabled, 0 means disabled, the characters are taken literally.
 */
@@ -7071,7 +7071,7 @@ whoami() {
 
     if ((c =  getlogin()) != NULL) {    /* name from utmp file */
         ckstrncpy (loginname, c, UIDBUFLEN);
-	debug(F110,"whoami loginname",loginname,0); 
+	debug(F110,"whoami loginname",loginname,0);
         if ((p = getpwnam(loginname)) != NULL) /* get passwd entry */
           if (p->pw_uid == ruid)        /* for loginname */
             ckstrncpy(realname, envname, UIDBUFLEN); /* if uid's are same */
@@ -7080,7 +7080,7 @@ whoami() {
   /* Use first name we get for ruid */
 
     if ((p = getpwuid(ruid)) == NULL) { /* name for uid */
-	debug(F101,"whoami no username for ruid","",ruid); 
+	debug(F101,"whoami no username for ruid","",ruid);
         realname[0] = '\0';             /* no user name */
         ruid = -1;
         return(NULL);
@@ -8648,7 +8648,7 @@ zsyslog() {
 #ifdef __FreeBSD__			/* 299 This was necessary in */
 #ifndef NODCLINITGROUPS			/* FreeBSD 4.4, don't know */
 #define NODCLINITGROUPS			/* about other versions... */
-#endif	/* NODCLINITGROUPS */            
+#endif	/* NODCLINITGROUPS */
 #endif	/*  __FreeBSD__ */
 
 int

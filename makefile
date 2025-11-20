@@ -74,7 +74,7 @@ CKVER= "10.0 Beta.12"
 # separated by whitespace.  Some versions of "make" understand these as
 # directives, which older make versions do not understand.  Uppercase letters
 # remove the danger, e.g. "# If you have..."
-# 
+#
 # WARNING: This is a huge makefile.  Although it is less likely since the
 # turn of the century, some "make" programs might run out of memory.  If this
 # happens to you, edit away the parts that do not apply to your platform and
@@ -849,7 +849,7 @@ CKVER= "10.0 Beta.12"
 # prefix statement changed in 10.0 Beta.06 to allow prefix to be specified
 # from the make command line e.g. $ env PREFIX=/usr/pkg make install.
 # October 2022.
-# 
+#
 prefix  = $${PREFIX:-/usr/local}
 srproot = $(prefix)
 sslroot = $(prefix)
@@ -869,14 +869,14 @@ SSLINC=-I$(sslroot)/ssl/include
 
 # To override these assignments; for example, if your OpenSSL files are
 # not in /usr/local/ssl, invoke the desired target like this:
-# 
+#
 #  make solaris9+openssl "SSLINC=-I/opt/openssl-0.9.8k/include" \
 #   "SSLLIB=-L/opt/openssl-0.9.8k/lib"
 #
-# (don't set the variables and then do "make -e" because that breaks 
+# (don't set the variables and then do "make -e" because that breaks
 # chaining of makefile targets.)
 #
-# Here are some up-to-date secure targets as of Sep 2009: 
+# Here are some up-to-date secure targets as of Sep 2009:
 #
 # aix+openssl:                        IBM AIX 4.2 or later with OpenSSL
 # freebsd44+srp+openssl               FreeBSD 4.4 with SRP and OpenSSL
@@ -891,7 +891,7 @@ SSLINC=-I$(sslroot)/ssl/include
 # linux+ssl                           OpenSSL only
 # linux+krb5+ssl                      Linux with Kerberos 5 and OpenSSL
 # linux+krb5:                         Kerberos 5 only
-# 
+#
 # The following secure Linux targets have not been updated or tested recently.
 # linux+krb5+krb4:
 # linux+srp:
@@ -917,7 +917,7 @@ SSLINC=-I$(sslroot)/ssl/include
 # linux+krb5+krb4+srp+openssl+zlib+pam:
 # linux+krb5+krb4+openssl+shadow+pam:
 # linux+krb5+openssl+zlib+shadow+pam:
-# 
+#
 # The following have not been tested recently either and might
 # need adjustment.
 #
@@ -1254,7 +1254,7 @@ install:
 
 # UN-Install C-Kermit after building
 # Please to not remove the extra blanks before and after '{}' within the
-# functions. You would get syntax errors for some older Bourne shells! Best is 
+# functions. You would get syntax errors for some older Bourne shells! Best is
 # you don't change or remove anything.
 #
 uninstall:
@@ -2351,7 +2351,7 @@ oldmacosx10ncx:
 	@rm -f ./curses.h
 
 #Mac OS X 10.3 (Panther) - Assumes ncurses is installed.
-oldmacosx103: 
+oldmacosx103:
 	@echo Making C-Kermit $(CKVER) for `uname -s` + ncurses...
 	$(MAKE) CC=$(CC) CC2=$(CC2) xermit KTARGET=$${KTARGET:-$(@)} \
 	"CFLAGS= -DMACOSX10 -DMACOSX103 -DCK_NCURSES -DTCPSOCKET -DCKHTTP \
@@ -3976,7 +3976,7 @@ solaris2xg+openssl+pam+shadow:
 	"LIBS= $(SSLLIB) -ltermlib \
 	-lsocket -lnsl -lm -lresolv -lssl -lcrypto -lpam"
 
-solaris2xg+openssl+zlib+srp+pam+shadow:	
+solaris2xg+openssl+zlib+srp+pam+shadow:
 	@echo 'Making C-Kermit $(CKVER) for Solaris 2.x with gcc, OpenSSL...'
 	@echo 'Please read the comments that accompany the solaris2xg target.'
 	$(MAKE) xermit KTARGET=$${KTARGET:-$(@)} CC=gcc CC2=gcc \
@@ -4236,7 +4236,7 @@ solaris9g+krb5+krb4:
 	-lkrb4 -lcrypto -lgssapi_krb5 -lkrb5 -lcom_err -lk5crypto \
 	-ldes $(LIBS)"
 
-#Solaris 9, 10, or 11 with gcc...  
+#Solaris 9, 10, or 11 with gcc...
 #Uses streams PTYs rather than BSD ptys as in C-Kermit 8.0 and earlier.
 #This target is chained to be the secure solaris9g+xxx targets below.
 solaris9g solaris10g solaris11g:
@@ -5751,9 +5751,9 @@ unisys5r2:
 sys5hdb:
 	$(MAKE) "MAKE=$(MAKE)" sys3hdb
 
-#Create the common header line for all hpux[5-11]* entries and above. This 
-#extra entry is here because our header message length may differ for each 
-#C-Kermit version. Don't use 'fold -s' for HP-UX 5.x - 7.x! This option is 
+#Create the common header line for all hpux[5-11]* entries and above. This
+#extra entry is here because our header message length may differ for each
+#C-Kermit version. Don't use 'fold -s' for HP-UX 5.x - 7.x! This option is
 #available only for HP-UX 8.0 and above!
 hpux-header:
 	@HPUX=`uname -r | sed -e 's/^[^1-9]*//' -e 's/\.00$$/.0/'` ; \
@@ -6182,7 +6182,7 @@ hpux0900gcc:
 #to KFLAGS.  These should be harmless in 10.00 and 10.10, if any of examples
 #of those still exist, but I have no way to test this hypothesis.
 #OK: 2009/11/16
-#As of version 9.0305 Alpha.06 we have to add KFLAG "-DNO_PTY_XOPEN_SOURCE" 
+#As of version 9.0305 Alpha.06 we have to add KFLAG "-DNO_PTY_XOPEN_SOURCE"
 #to "make hpux1000" and "make hpux1000t" because "#define _XOPEN_SOURCE 500"
 #that was added to ckupty.c in 2014 triggers big problems with the HP C
 #compiler in default (i.e. pre-ANSI K&R) mode.
@@ -6664,7 +6664,7 @@ linuxmin:
 #Modified 17 Aug 2005 to use openpty() if available because the other stuff
 #dumps core in 64-bit ia64 and x86_64 builds.
 #
-#Added HAVE_LOCKDEV on openSuSE >= 11.3, which uses ttylock directly instead 
+#Added HAVE_LOCKDEV on openSuSE >= 11.3, which uses ttylock directly instead
 #of baudboy 2010/08/23
 linux-2015:
 	@if test \
@@ -6982,7 +6982,7 @@ linux+krb5+krb4:
 	$(MAKE) linux+krb5 KTARGET=$${KTARGET:-$(@)} \
 	"KFLAGS=-DKRB4 -DKRB524 $(KFLAGS)" "LIBS=$(LIBS) -lkrb4"
 
-# Linux with OpenSSL 
+# Linux with OpenSSL
 # In Linux, SSL libs are often in /lib or /usr/lib and so found by default.
 # This targets takes into account the DES library might or might not
 # exist.  If it does exist, however, the target will require some editing

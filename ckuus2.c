@@ -1903,7 +1903,7 @@ static char *hmxxchange[] = {
 "   /DESTINATION:name  Store resulting changed files in named directory.",
 "   If neither of these options is given, original files are overwritten.",
 " ",
-" String selection switches:", 
+" String selection switches:",
 " ",
 "   /CASE:{ON,OFF}  OFF (default) = ignore case in string1; \
 ON = don't ignore",
@@ -2531,7 +2531,7 @@ static char *hmxxpat[] = {
 "All other commands and functions use anchored patterns, meaning that ^ and $",
 "are not treated specially, and * is not assumed at the beginning or end of",
 "the pattern.  This is true mainly of filename patterns (wildcards), since",
-"you would not want a command like \"delete x\" to delete all files whose", 
+"you would not want a command like \"delete x\" to delete all files whose",
 "names contained \"x\"!",
 
 " ",
@@ -7811,7 +7811,7 @@ static char *hxymouse[] = {
 "   Button 1 Ctrl-Shift-Drag = Kverb: \\Kdump",
 "   Button 2 Double-Click = Kverb: \\Kpaste",
 "   Button 2 Drag = Kverb: \\Kmarkcopyhost",
-"   Button 2 Alt-Drag = Kverb: \\Kmarkcopyhost_noeol     ",    
+"   Button 2 Alt-Drag = Kverb: \\Kmarkcopyhost_noeol     ",
 "   Button 3 Double-Click = Kverb: \\Kpaste",
 #ifndef NOSCROLLWHEEL
 "   Wheel Up = Kverb: \\Kupone",
@@ -8623,7 +8623,7 @@ Enter CONNECT (terminal) mode automatically if the connection is successful.",
 "  SET HOST madlab.sprl.umich.edu 3000",
 "  SET HOST xyzcorp.com 2000 /RAW-SOCKET",
 #ifdef SSHBUILTIN
-"  SET HOST /NET:SSH kermit.columbia.edu /x11-forwarding:on", 
+"  SET HOST /NET:SSH kermit.columbia.edu /x11-forwarding:on",
 #endif /* SSHBUILTIN */
 #ifdef NETCMD
 "  SET HOST /CONNECT /COMMAND rlogin xyzcorp.com",
@@ -12065,7 +12065,7 @@ Returns number:\n");
   0 if file not found or not recognized;\n\
   1 if orientation is landscape;\n\
   2 if orientation is portrait;\n\
-  3 if the image is square.\n"); 
+  3 if the image is square.\n");
 	printf("\n\
 If an array name is included, and if the function's return value is\n\
 greater than 0, element 1 of the array is filled in with the image\n\
@@ -12080,7 +12080,7 @@ width in pixels, element 2 the image height, and element 3 is the image's\n\
         printf("Returns integer:\n\
  -1 on failure to get information;\n\
   1 if n1 is the ID of an active process;\n\
-  0 if the process does not exist.\n"); 
+  0 if the process does not exist.\n");
         break;
 
       case FN_FUNC:
@@ -12088,7 +12088,7 @@ width in pixels, element 2 the image height, and element 3 is the image's\n\
  s1 = name of function.\n");
         printf("Returns integer:\n\
   1 if s1 is the name of an available built-in function;\n\
-  0 otherwise.\n"); 
+  0 otherwise.\n");
         break;
 
       case FN_RECURSE:
@@ -14364,181 +14364,181 @@ dohkverb(xx) int xx; {
         case  K_I31_F01:
         printf("\\Ki31_f01         Transmit IBM 31xx: F1\n");
         break;
-       case  K_I31_F02:         
+       case  K_I31_F02:
         printf("\\Ki31_f02         Transmit IBM 31xx: F2\n");
         break;
-       case  K_I31_F03:         
+       case  K_I31_F03:
         printf("\\Ki31_f03         Transmit IBM 31xx: F3\n");
         break;
-       case  K_I31_F04:         
+       case  K_I31_F04:
         printf("\\Ki31_f04         Transmit IBM 31xx: F4\n");
         break;
-       case  K_I31_F05:         
+       case  K_I31_F05:
         printf("\\Ki31_f05         Transmit IBM 31xx: F5\n");
         break;
-       case  K_I31_F06:         
+       case  K_I31_F06:
         printf("\\Ki31_f06         Transmit IBM 31xx: F6\n");
         break;
-       case  K_I31_F07:         
+       case  K_I31_F07:
         printf("\\Ki31_f07         Transmit IBM 31xx: F7\n");
         break;
-       case  K_I31_F08:         
+       case  K_I31_F08:
         printf("\\Ki31_f08         Transmit IBM 31xx: F8\n");
         break;
-       case  K_I31_F09:         
+       case  K_I31_F09:
         printf("\\Ki31_f09         Transmit IBM 31xx: F9\n");
         break;
-       case  K_I31_F10:         
+       case  K_I31_F10:
         printf("\\Ki31_f10         Transmit IBM 31xx: F10\n");
         break;
-       case  K_I31_F11:         
+       case  K_I31_F11:
         printf("\\Ki31_f11         Transmit IBM 31xx: F11\n");
         break;
-       case  K_I31_F12:         
+       case  K_I31_F12:
         printf("\\Ki31_f12         Transmit IBM 31xx: F12\n");
         break;
-       case  K_I31_F13:         
+       case  K_I31_F13:
         printf("\\Ki31_f13         Transmit IBM 31xx: F13\n");
         break;
-       case  K_I31_F14:         
+       case  K_I31_F14:
         printf("\\Ki31_f14         Transmit IBM 31xx: F14\n");
         break;
-       case  K_I31_F15:         
+       case  K_I31_F15:
         printf("\\Ki31_f15         Transmit IBM 31xx: F15\n");
         break;
-       case  K_I31_F16:         
+       case  K_I31_F16:
         printf("\\Ki31_f16         Transmit IBM 31xx: F16\n");
         break;
-       case  K_I31_F17:         
+       case  K_I31_F17:
         printf("\\Ki31_f17         Transmit IBM 31xx: F17\n");
         break;
-       case  K_I31_F18:         
+       case  K_I31_F18:
         printf("\\Ki31_f18         Transmit IBM 31xx: F18\n");
         break;
-       case  K_I31_F19:         
+       case  K_I31_F19:
         printf("\\Ki31_f19         Transmit IBM 31xx: F19\n");
         break;
-       case  K_I31_F20:         
+       case  K_I31_F20:
         printf("\\Ki31_f20         Transmit IBM 31xx: F20\n");
         break;
-       case  K_I31_F21:         
+       case  K_I31_F21:
         printf("\\Ki31_f21         Transmit IBM 31xx: F21\n");
         break;
-       case  K_I31_F22:         
+       case  K_I31_F22:
         printf("\\Ki31_f22         Transmit IBM 31xx: F22\n");
         break;
-       case  K_I31_F23:         
+       case  K_I31_F23:
         printf("\\Ki31_f23         Transmit IBM 31xx: F23\n");
         break;
-       case  K_I31_F24:         
+       case  K_I31_F24:
         printf("\\Ki31_f24         Transmit IBM 31xx: F24\n");
         break;
-       case  K_I31_F25:         
+       case  K_I31_F25:
         printf("\\Ki31_f25         Transmit IBM 31xx: F25\n");
         break;
-       case  K_I31_F26:         
+       case  K_I31_F26:
         printf("\\Ki31_f26         Transmit IBM 31xx: F26\n");
         break;
-       case  K_I31_F27:         
+       case  K_I31_F27:
         printf("\\Ki31_f27         Transmit IBM 31xx: F27\n");
         break;
-       case  K_I31_F28:         
+       case  K_I31_F28:
         printf("\\Ki31_f28         Transmit IBM 31xx: F28\n");
         break;
-       case  K_I31_F29:         
+       case  K_I31_F29:
         printf("\\Ki31_f29         Transmit IBM 31xx: F29\n");
         break;
-       case  K_I31_F30:         
+       case  K_I31_F30:
         printf("\\Ki31_f30         Transmit IBM 31xx: F30\n");
         break;
-       case  K_I31_F31:         
+       case  K_I31_F31:
         printf("\\Ki31_f31         Transmit IBM 31xx: F31\n");
         break;
-       case  K_I31_F32:         
+       case  K_I31_F32:
         printf("\\Ki31_f32         Transmit IBM 31xx: F32\n");
         break;
-       case  K_I31_F33:         
+       case  K_I31_F33:
         printf("\\Ki31_f33         Transmit IBM 31xx: F33\n");
         break;
-       case  K_I31_F34:         
+       case  K_I31_F34:
         printf("\\Ki31_f34         Transmit IBM 31xx: F34\n");
         break;
-       case  K_I31_F35:         
+       case  K_I31_F35:
         printf("\\Ki31_f35         Transmit IBM 31xx: F35\n");
         break;
-       case  K_I31_F36:         
+       case  K_I31_F36:
         printf("\\Ki31_f36         Transmit IBM 31xx: F36\n");
         break;
-       case  K_I31_PA1:         
+       case  K_I31_PA1:
         printf("\\Ki31_pa1         Transmit IBM 31xx: PA1\n");
         break;
-       case  K_I31_PA2:         
+       case  K_I31_PA2:
         printf("\\Ki31_pa2         Transmit IBM 31xx: PA2\n");
         break;
-       case  K_I31_PA3:         
+       case  K_I31_PA3:
         printf("\\Ki31_pa3         Transmit IBM 31xx: PA3\n");
         break;
        case  K_I31_RESET:
         printf("\\Ki31_reset       Transmit IBM 31xx: Reset\n");
-        break;            
-       case  K_I31_JUMP:        
+        break;
+       case  K_I31_JUMP:
         printf("\\Ki31_jump        Transmit IBM 31xx: Jump\n");
         break;
-       case  K_I31_CLEAR:       
+       case  K_I31_CLEAR:
         printf("\\Ki31_clear       Transmit IBM 31xx: Clear\n");
         break;
-       case  K_I31_ERASE_EOF:   
+       case  K_I31_ERASE_EOF:
         printf("\\Ki31_erase_eof   Transmit IBM 31xx: Erase to End of Field\n");
         break;
-       case  K_I31_ERASE_EOP:   
+       case  K_I31_ERASE_EOP:
         printf("\\Ki31_eop         Transmit IBM 31xx: Erase to End of Page\n");
         break;
-       case  K_I31_ERASE_INP:   
+       case  K_I31_ERASE_INP:
         printf("\\Ki31_inp         Transmit IBM 31xx: Erase Input Operation\n");
         break;
-       case  K_I31_INSERT_CHAR: 
+       case  K_I31_INSERT_CHAR:
         printf("\\Ki31_ins_char    Transmit IBM 31xx: Insert Character\n");
         break;
        case  K_I31_INSERT_SPACE:
         printf("\\Ki31_ins_space   Transmit IBM 31xx: Insert Space\n");
         break;
-       case  K_I31_DELETE:      
+       case  K_I31_DELETE:
         printf("\\Ki31_delete      Transmit IBM 31xx: Delete Character\n");
         break;
-       case  K_I31_INS_LN:      
+       case  K_I31_INS_LN:
         printf("\\Ki31_ins_line    Transmit IBM 31xx: Insert Line\n");
         break;
-       case  K_I31_DEL_LN:      
+       case  K_I31_DEL_LN:
         printf("\\Ki31_del_ln      Transmit IBM 31xx: Delete Line\n");
         break;
-       case  K_I31_PRINT_LINE:  
+       case  K_I31_PRINT_LINE:
         printf("\\Ki31_prt_line    Transmit IBM 31xx: Print Line\n");
         break;
-       case  K_I31_PRINT_MSG:   
+       case  K_I31_PRINT_MSG:
         printf("\\Ki31_prt_msg     Transmit IBM 31xx: Print Message\n");
         break;
-       case  K_I31_PRINT_SHIFT: 
+       case  K_I31_PRINT_SHIFT:
         printf("\\Ki31_prt_shift   Transmit IBM 31xx: Print Shift\n");
         break;
-       case  K_I31_CANCEL:      
+       case  K_I31_CANCEL:
         printf("\\Ki31_cancel      Transmit IBM 31xx: Cancel\n");
         break;
-       case  K_I31_SEND_LINE:   
+       case  K_I31_SEND_LINE:
         printf("\\Ki31_send_line   Transmit IBM 31xx: Send Line\n");
         break;
-       case  K_I31_SEND_MSG:    
+       case  K_I31_SEND_MSG:
         printf("\\Ki31_send_msg    Transmit IBM 31xx: Send Message\n");
         break;
-       case  K_I31_SEND_PAGE:   
+       case  K_I31_SEND_PAGE:
         printf("\\Ki31_send_page   Transmit IBM 31xx: Send Page\n");
         break;
-       case  K_I31_HOME:        
+       case  K_I31_HOME:
         printf("\\Ki31_home        Transmit IBM 31xx: Home\n");
         break;
-       case  K_I31_BACK_TAB:    
+       case  K_I31_BACK_TAB:
         printf("\\Ki31_back_tab    Transmit IBM 31xx: Back Tab\n");
         break;
-       case  K_SUN_STOP: 
+       case  K_SUN_STOP:
         printf("\\Ksunstop         Transmit SUN Console: Stop\n");
         break;
        case  K_SUN_AGAIN:
@@ -14547,28 +14547,28 @@ dohkverb(xx) int xx; {
        case  K_SUN_PROPS:
         printf("\\Ksunprops        Transmit SUN Console: Props\n");
         break;
-       case  K_SUN_UNDO: 
+       case  K_SUN_UNDO:
         printf("\\Ksunundo         Transmit SUN Console: Undo\n");
         break;
        case  K_SUN_FRONT:
         printf("\\Ksunfront        Transmit SUN Console: Front\n");
         break;
-       case  K_SUN_COPY: 
+       case  K_SUN_COPY:
         printf("\\Ksuncopy         Transmit SUN Console: Copy\n");
         break;
-       case  K_SUN_OPEN: 
+       case  K_SUN_OPEN:
         printf("\\Ksunopen         Transmit SUN Console: Open\n");
         break;
        case  K_SUN_PASTE:
         printf("\\Ksunpaste        Transmit SUN Console: Paste\n");
         break;
-       case  K_SUN_FIND: 
+       case  K_SUN_FIND:
         printf("\\Ksunfind         Transmit SUN Console: Find\n");
         break;
-       case  K_SUN_CUT:  
+       case  K_SUN_CUT:
         printf("\\Ksuncut          Transmit SUN Console: Cut\n");
         break;
-       case  K_SUN_HELP: 
+       case  K_SUN_HELP:
         printf("\\Ksunhelp         Transmit SUN Console: Help\n");
         break;
 

@@ -454,7 +454,7 @@ urlparse(s,url) char *s; struct urldata * url;
             makestr(&url->psw,p);
         }
         /* Save a copy of the full url if one was found. */
-	if (url->svc) 
+	if (url->svc)
 	  makestr(&url->sav,s);
         free(urlbuf);
 	return(url->svc ? 1 : 0);
@@ -627,7 +627,7 @@ xx_ftp(host, port) char * host, * port;
 	    haveftpuid = 0;		/* "ftp://:@host" given. */
 	    uidbuf[0] = NUL;
 	    makestr(&ftp_logname,NULL);
-	}	  
+	}
 	debug(F111,"ftp xx_ftp uidbuf 2",uidbuf,haveftpuid);
     }
 #endif /* NOURL */
@@ -644,11 +644,11 @@ xx_ftp(host, port) char * host, * port;
     if (!port) {
 #ifdef CK_URL
         if (haveurl) {
-	    if (g_url.por) 
+	    if (g_url.por)
 	      port = g_url.por;
             else if (g_url.svc)
 	      port = g_url.svc;
-            else 
+            else
 	      port = "ftp";
         } else
 #endif /* CK_URL */
@@ -808,7 +808,7 @@ cmdlin() {
 	char rdns[128];
 #ifdef OS2
 	char * agent = "Kermit 95";
-#else   
+#else
 	char * agent = "C-Kermit";
 #endif /* OS2 */
 
@@ -827,7 +827,7 @@ cmdlin() {
             }
             rdns[0] = '\0';
             lfile = "";
-            x = (http_open(g_url.hos,g_url.por ? g_url.por : g_url.svc, 
+            x = (http_open(g_url.hos,g_url.por ? g_url.por : g_url.svc,
                            type == URL_HTTPS, rdns,128,NULL) == 0);
             if (x) {
 #ifdef KUI
@@ -874,7 +874,7 @@ cmdlin() {
 		  printf("?HTTP Connection failed.\r\n");
             }
             doexit(x ? GOOD_EXIT : BAD_EXIT, -1);
-        } else 
+        } else
 #endif /* CK_URL */
 #endif /* NOICP */
 	  {
@@ -1063,7 +1063,7 @@ cmdlin() {
 		    case HTTP_GET:
 		      x = http_get(agent,NULL,user,pswd,0,lpath,path,0);
 		      break;
-		      
+
 		    case HTTP_PUT:
 		      x = http_put(agent,NULL,"text/HTML",
 				   user,pswd,0,lpath,path,NULL,0);
@@ -1088,7 +1088,7 @@ cmdlin() {
 #ifdef CK_URL
 	  if (haveurl)
             doftparg('U');
-	  else 
+	  else
 #endif /* CK_URL */
 	    {
 		while (--xargc > 0) {	/* Go through command line words */
@@ -1422,7 +1422,7 @@ cmdlin() {
               ckstrncat(ttname,":",TTNAMLEN+1);
               ckstrncat(ttname,ssh_get_sparam(SSH_SPARAM_PRT),TTNAMLEN+1);
           }
-	  else 
+	  else
 #endif /* CK_URL */
 	  {
               while (--xargc > 0) {	/* Go through command line words */
@@ -1548,8 +1548,8 @@ cmdlin() {
                   if (k >= 0) {                     /* If found, */
                       if (dodo(k,ttname,0) > -1)    /* set it up, */
                           parser(1);                /* and execute it */
-                  } 
-              }     
+                  }
+              }
           }
 #endif /* NOSPL */
 	  return(0);
