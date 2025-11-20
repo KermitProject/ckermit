@@ -2193,7 +2193,7 @@ sysinit() {
 #endif /* NOSIGWINCH */
 
 #ifdef SIGXFSZ
-    signal(SIGXFSZ,SIG_IGN);		/* Ignore writing past file limit */ 
+    signal(SIGXFSZ,SIG_IGN);		/* Ignore writing past file limit */
 #endif	/* SIGXFSZ */
 
 #ifndef NOJC
@@ -2795,7 +2795,7 @@ debug(F110,"XXX netopen in ifdef NETCONN...","A",0);
  equivalent until you have a file descriptor that you can give to ttyname().
  But this can cause a race condition between Kermit and [m]getty.  So see
  the [#]else part...
-*/ 
+*/
 
 /*
  In the following section, we open the tty device for read/write.
@@ -3153,7 +3153,7 @@ debug(F110,"XXX netopen in ifdef NETCONN...","A",0);
 
 #ifdef Plan9
     /* take this opportunity to open the control channel */
-    if (p9openttyctl(fnam) < 0)       
+    if (p9openttyctl(fnam) < 0)
 #else
       if (!ttfdflg && !isatty(ttyfd) && strcmp(fnam,"/dev/null"))
 #endif /* Plan9 */
@@ -3566,7 +3566,7 @@ do_open(ttname) char *ttname;
 		     0 :
 		     (ttcarr != CAR_ON) ? O_NONBLOCK : 0)
 		    )
-	   ); 
+	   );
 #else  /* !QNX6 */
 
 #ifndef	O_NDELAY			/* O_NDELAY not defined */
@@ -3804,7 +3804,7 @@ ttclos(foo) int foo;
 		tcsetattr(ttyfd,TCSANOW,&ttold);
 #else /* !BSD44ORPOSIX */
 #ifdef ATTSV
-		ioctl(ttyfd,TCSETAW,&ttold);		
+		ioctl(ttyfd,TCSETAW,&ttold);
 #else  /* !ATTSV */
 		stty(ttyfd,&ttold);
 #endif	/* ATTSV */
@@ -4171,7 +4171,7 @@ tthang() {
 #endif /* DEBUG */
 
 #else  /* HUP_CLOSE_POSIX */
-	
+
 	/* General BSD44ORPOSIX case (Linux, BSDI, FreeBSD, etc) */
 
 	debug(F100,"tthang BSD44ORPOSIX B0","",0);
@@ -4652,7 +4652,7 @@ ttres() {                               /* Restore the tty to normal. */
             int rc = -1;
             if ((rc = tnsetflow(ttflow)) < 0)
 	      return(rc);
-            if (ttspeed <= 0) 
+            if (ttspeed <= 0)
 	      ttspeed = tnc_get_baud();
             else if ((rc = tnc_set_baud(ttspeed)) < 0)
 	      return(rc);
@@ -6506,7 +6506,7 @@ ttpkt(speed,xflow,parity) long speed; int xflow, parity;
                 ttflow = flow;
             }
             if (speed != ttspeed) {
-                if (speed <= 0) 
+                if (speed <= 0)
 		  speed = tnc_get_baud();
                 else if ((rc = tnc_set_baud(speed)) < 0)
 		  return(rc);
@@ -6535,7 +6535,7 @@ ttpkt(speed,xflow,parity) long speed; int xflow, parity;
                     tnc_set_parity(5);
                     break;
                 }
-            } else 
+            } else
 #endif /* HWPARITY */
 	    {
                 tnc_set_parity(1);              /* None */
@@ -7202,7 +7202,7 @@ ttvt(speed,flow) long speed; int flow;
                 ttflow = flow;
             }
             if (speed != ttspeed) {
-                if (speed <= 0) 
+                if (speed <= 0)
 		  speed = tnc_get_baud();
                 else if ((rc = tnc_set_baud(speed)) < 0)
 		  return(rc);
@@ -7482,7 +7482,7 @@ ttvt(speed,flow) long speed; int flow;
     debug(F101,"ttvt ATTSV ioctl TCSETAW","",x);
     if (x < 0) {			/* set new modes . */
 	debug(F101,"ttvt ATTSV ioctl TCSETAW errno","",errno);
-	return(-1);	
+	return(-1);
     }
 #endif /* BSD44ORPOSIX */
 #endif /* Plan9 */
@@ -11398,7 +11398,7 @@ ttinl(dest,max,timo,eol) int max,timo; CHAR *dest, eol;
   NOTE: This code reworked to (a) execute even if the debug log isn't active;
   and (b) actually work.  -fdc, 2007/02/22.  And again 2007/08/12-13 to also
   work on encrypted connections.
-*/	
+*/
 		debug(F101,"TTINL my_count","",my_count);
 		if ((n & ttpmsk) != eol) { /* Not the packet terminator */
 		    int x;
@@ -11410,7 +11410,7 @@ ttinl(dest,max,timo,eol) int max,timo; CHAR *dest, eol;
 			    CHAR ch = x;
 			    ck_tn_decrypt((char *)&ch,1);
 			    x = ch;
-			    debug(F000,"TTINL lkdecr char","",x); 
+			    debug(F000,"TTINL lkdecr char","",x);
 			}
 #endif	/* CK_ENCRYPTION */
 			/*
@@ -13889,42 +13889,42 @@ ttgmdm() {
 #ifdef TIOCM_CTS
     /* Clear To Send */
     if (y & TIOCM_CTS) z |= BM_CTS;
-    debug(F101,"ttgmdm TIOCM_CTS defined","",TIOCM_CTS); 
+    debug(F101,"ttgmdm TIOCM_CTS defined","",TIOCM_CTS);
 #else
     debug(F100,"ttgmdm TIOCM_CTS not defined","",0);
 #endif
 #ifdef TIOCM_DSR
     /* Data Set Ready */
     if (y & TIOCM_DSR) z |= BM_DSR;
-    debug(F101,"ttgmdm TIOCM_DSR defined","",TIOCM_DSR); 
+    debug(F101,"ttgmdm TIOCM_DSR defined","",TIOCM_DSR);
 #else
     debug(F100,"ttgmdm TIOCM_DSR not defined","",0);
 #endif
 #ifdef TIOCM_CAR
     /* Carrier */
     if (y & TIOCM_CAR) z |= BM_DCD;
-    debug(F101,"ttgmdm TIOCM_CAR defined","",TIOCM_CAR); 
+    debug(F101,"ttgmdm TIOCM_CAR defined","",TIOCM_CAR);
 #else
     debug(F100,"ttgmdm TIOCM_CAR not defined","",0);
 #endif
 #ifdef TIOCM_RNG
     /* Ring Indicate */
     if (y & TIOCM_RNG) z |= BM_RNG;
-    debug(F101,"ttgmdm TIOCM_RNG defined","",TIOCM_RNG); 
+    debug(F101,"ttgmdm TIOCM_RNG defined","",TIOCM_RNG);
 #else
     debug(F100,"ttgmdm TIOCM_RNG not defined","",0);
 #endif
 #ifdef TIOCM_DTR
     /* Data Terminal Ready */
     if (y & TIOCM_DTR) z |= BM_DTR;
-    debug(F101,"ttgmdm TIOCM_DTR defined","",TIOCM_DTR); 
+    debug(F101,"ttgmdm TIOCM_DTR defined","",TIOCM_DTR);
 #else
     debug(F100,"ttgmdm TIOCM_DTR not defined","",0);
 #endif
 #ifdef TIOCM_RTS
     /* Request To Send */
     if (y & TIOCM_RTS) z |= BM_RTS;
-    debug(F101,"ttgmdm TIOCM_RTS defined","",TIOCM_RTS); 
+    debug(F101,"ttgmdm TIOCM_RTS defined","",TIOCM_RTS);
 #else
     debug(F100,"ttgmdm TIOCM_RTS not defined","",0);
 #endif
@@ -14515,7 +14515,7 @@ tt_is_secure() {	  /* Tells whether the current connection is secure */
 }
 
 #ifdef CK_REDIR
-  
+
 /* External protocol handler parameters from ckuus3.c */
 extern int exp_handler, exp_stderr, exp_timo;
 
@@ -14897,7 +14897,7 @@ pty_get_status(fd,pid) int fd; PID_T pid;
     if (x > 0) {
 	if (x != pty_fork_pid)
 	  debug(F101,
-		"pty_get_status waitpid pid doesn't match","",pty_fork_pid); 
+		"pty_get_status waitpid pid doesn't match","",pty_fork_pid);
 	debug(F101,"pty_get_status waitpid status","",status);
 	debug(F101,"pty_get_status waitpid errno","",errno);
 	if (WIFEXITED(status)) {
@@ -14950,7 +14950,7 @@ pty_get_status(fd,pid) int fd; PID_T pid;
      tested on some platforms (NetBSD, luckily) but not others (Solaris,
      Linux).
 
-  On the network side, we use ttinc() and ttoc(), which, for network 
+  On the network side, we use ttinc() and ttoc(), which, for network
   connections, handle any active security methods.
 
   Call with s = command.
@@ -15149,7 +15149,7 @@ ttptycmd(s) char *s;
 	    exit(1);
 	}
 	signal(SIGINT,SIG_IGN);		/* Let upper fork catch this */
-	
+
 #ifdef COMMENT
 #ifdef TIOCSCTTY
 	/* Make pty the controlling terminal for the process */
@@ -15178,13 +15178,13 @@ ttptycmd(s) char *s;
 #endif	/* COMMENT */
 
 #ifdef COMMENT
-#ifdef SIGTTOU	
+#ifdef SIGTTOU
 	/* Ignore terminal output interrupts */
 	/* THIS HAS NO EFFECT */
 	debug(F100,"ttptycmd ignoring SIGTTOU","",0);
 	signal(SIGTTOU, SIG_IGN);
 #endif	/* SIGTTOU */
-#ifdef SIGTSTP	
+#ifdef SIGTSTP
 	/* Ignore terminal output interrupts */
 	/* THIS HAS NO EFFECT */
 	debug(F100,"ttptycmd ignoring SIGTSTP","",0);
@@ -15223,7 +15223,7 @@ ttptycmd(s) char *s;
 			  makestr(&(args[i]),NULL);
 		    }
 		}
-	    }	    
+	    }
 	}
 #ifdef COMMENT
 /*
@@ -15242,7 +15242,7 @@ ttptycmd(s) char *s;
 	debug(F101,"ttptycmd execvp failed","",errno);
 	close(slavefd);
 	exit(1);
-    } 
+    }
     /* (there are better ways to do this...) */
     msleep(1000);		  /* Make parent wait for child to be ready */
     ptyfd = masterfd;			/* We talk to the master */
@@ -15260,7 +15260,7 @@ ttptycmd(s) char *s;
     debug(F101,"ttptycmd PTY_TBUF_SIZE","",PTY_TBUF_SIZE);
 
 #ifdef PTY_USE_NDELAY
-    /* 
+    /*
        NOTE: If select() and ioctl(ptyfd,FIONREAD,&n) return true indications
        on the pty, we don't need nonblocking reads.  Performance of either
        method seems to be about the same, so use whatever works.
@@ -15349,7 +15349,7 @@ ttptycmd(s) char *s;
 	    if (have_pty) {
 		/* This is not right -- sleeping won't accomplish anything */
 		debug(F101,"ttptycmd msleep","",100);
-		msleep(100);	    
+		msleep(100);
 	    } else {
 		debug(F100,"ttptycmd no pty - quitting loop","",0);
 		break;
@@ -15359,7 +15359,7 @@ ttptycmd(s) char *s;
 
 	if (seconds_to_wait > 0L) {	/* Timeout in case nothing happens */
 	    tv.tv_sec = seconds_to_wait; /* for a long time */
-	    tv.tv_usec = 0L;		
+	    tv.tv_usec = 0L;
 	    tv2 = &tv;
         } else {
             tv2 = NULL;
@@ -15373,7 +15373,7 @@ ttptycmd(s) char *s;
 	    break;
 	}
 	if (x == 0) {
-	    debug(F101,"ttptycmd +++ select timeout","",seconds_to_wait); 
+	    debug(F101,"ttptycmd +++ select timeout","",seconds_to_wait);
 	    if (have_pty) {
 		status = pty_get_status(ptyfd,pty_fork_pid);
 		debug(F101,"ttptycmd pty_get_status A","",status);
@@ -15404,7 +15404,7 @@ ttptycmd(s) char *s;
 			    c = 0x00;
 			    dbuf[x++] = c;
 			    debug(F000,">>> CR-NUL","",c);
-			}			
+			}
 		    }
 		    dbuf[x++] = c;	/* Copy and count it */
 		    debug(F000,">>> char",ckitoa(in_state),c);
@@ -15474,14 +15474,14 @@ ttptycmd(s) char *s;
 	    tset++;
 	    debug(F100,"ttptycmd FD_ISSET ttyfd in","",0);
 	    n = in_chk(1,ttyfd);
-	    debug(F101,"ttptycmd in_chk(ttyfd)","",n); 
+	    debug(F101,"ttptycmd in_chk(ttyfd)","",n);
 	    if (n < 0 || ttyfd == -1) {
 		debug(F101,"ttptycmd +++ ttyfd errno","",errno);
 		net_err++;
 	    } else if (n > 0) {
 		if (n > PTY_TBUF_SIZE - tbuf_avail)
 		  n = PTY_TBUF_SIZE - tbuf_avail;
-		debug(F101,"ttptycmd net read size adjusted","",n); 
+		debug(F101,"ttptycmd net read size adjusted","",n);
 		if (xlocal && netconn) {
 		    /*
 		      We have to use a byte loop here because ttxin()
@@ -15569,7 +15569,7 @@ ttptycmd(s) char *s;
 		    debug(F100,msgbuf,"",0);
 		} else {
 		    x = ttxin(n,tbuf+tbuf_avail);
-		    debug(F101,"ttptycmd ttxin x","",x); 
+		    debug(F101,"ttptycmd ttxin x","",x);
 		}
 
 		if (x < 0) {
@@ -15595,14 +15595,14 @@ ttptycmd(s) char *s;
 	    */
 	    n = pty_chk(ptyfd);
 #endif /* PTY_USE_NDELAY */
-	    debug(F101,"ttptycmd pty_chk() n","",n); 
+	    debug(F101,"ttptycmd pty_chk() n","",n);
 
 	    if (n < 0)
 	      n = 0;
 	    if (n > 0) {
 		if (n > PTY_PBUF_SIZE - pbuf_avail)
 		  n = PTY_PBUF_SIZE - pbuf_avail;
-		debug(F101,"ttptycmd pty read size adjusted","",n); 
+		debug(F101,"ttptycmd pty read size adjusted","",n);
 		errno = 0;
 		x = read(ptyfd,pbuf+pbuf_avail,n);
 #ifdef DEBUG
@@ -15648,7 +15648,7 @@ ttptycmd(s) char *s;
 			msleep(100);	/* sleep a bit */
 		    }
 		    x = 0;
-		} 
+		}
 		/* Hopefully the next two are no longer needed... */
 		if (!pty_err && (
 #ifndef PTY_USE_NDELAY
@@ -15693,7 +15693,7 @@ ttptycmd(s) char *s;
 
 	/* See if we can exit */
 
-	x1 = pbuf_avail - pbuf_written; 
+	x1 = pbuf_avail - pbuf_written;
 	x2 = tbuf_avail - tbuf_written;
 
 	debug(F101,"ttptycmd pty_err LOOP EXIT TEST pty_err","",pty_err);
@@ -15718,7 +15718,7 @@ ttptycmd(s) char *s;
 	}
 	if (pty_err) {			/* Pty error? */
 	    if (have_pty) {
-		if (pexitstat < 0) {		
+		if (pexitstat < 0) {
 		    status = pty_get_status(ptyfd,pty_fork_pid);
 		    debug(F101,"ttptycmd pty_get_status E","",status);
 		    if (status > -1) pexitstat = status;

@@ -2284,7 +2284,7 @@ parsdir(cx) int cx;
 
             dirpath[0] = '\0';
             len = strlen(env) + 2*strlen(startupdir) + 2*strlen(inidir)
-                + (appdata0?2*strlen(appdata0):0) 
+                + (appdata0?2*strlen(appdata0):0)
                 + (appdata1?2*strlen(appdata1):0)
                 + 2*strlen(zhome()) + 2*strlen(exedir) + 8*strlen("PHONES/")
                 + 12;
@@ -2296,13 +2296,13 @@ parsdir(cx) int cx;
                     (env[0] && env[strlen(env)-1] == ';') ? "" : ";",
                     startupdir,
                     startupdir, "PHONES/",
-                    appdata1 ? appdata1 : "", 
+                    appdata1 ? appdata1 : "",
                     appdata1 ? "Kermit 95;" : "",
-                    appdata1 ? appdata1 : "", 
+                    appdata1 ? appdata1 : "",
                     appdata1 ? "Kermit 95/PHONES/;" : "",
-                    appdata0 ? appdata0 : "", 
+                    appdata0 ? appdata0 : "",
                     appdata0 ? "Kermit 95;" : "",
-                    appdata0 ? appdata0 : "", 
+                    appdata0 ? appdata0 : "",
                     appdata0 ? "Kermit 95/PHONES/;" : "",
                     inidir,
                     inidir, "PHONES/",
@@ -2655,7 +2655,7 @@ extern int gui_dialog;
 
 /* u q _ o k  --  User Query, get Yes/No or OK Cancel  */
 /*
-  Call with:  
+  Call with:
     preface: Explanatory text to print, or NULL.
     prompt:  Prompt.
     mask:    Bitmask for legal responses: 1 = OK or Yes; 2 = No or Cancel.
@@ -2664,7 +2664,7 @@ extern int gui_dialog;
   Returns:
    -1:       Invalid argument(s).
     0:       User said No or Cancel.
-    1        User said Yes or OK.    
+    1        User said Yes or OK.
   Notes:
     preface and prompt should not include final line terminator but may
     include embedded ones.  Help text is in case GUI dialog needs a Help
@@ -2711,7 +2711,7 @@ uq_ok(preface,prompt,mask,help,dflt)
 	  free(text);
         if (!rc)
 	  return(-1);
-        else 
+        else
 	  return(1);
       } else
 #endif  /* KUI */
@@ -2733,7 +2733,7 @@ uq_ok(preface,prompt,mask,help,dflt)
         rc = MessageBox(hwndConsole,
                          text ? text : prompt,
                          prompt,
-                         MB_YESNO | MB_ICONINFORMATION | MB_TASKMODAL | 
+                         MB_YESNO | MB_ICONINFORMATION | MB_TASKMODAL |
                          (dflt == 2 ? MB_DEFBUTTON2 : MB_DEFBUTTON1));
 #ifndef CKT_NT35_OR_31
         ShowWindowAsync(hwndConsole,SW_SHOWNORMAL);
@@ -2764,9 +2764,9 @@ uq_ok(preface,prompt,mask,help,dflt)
 
 /* u q _ t x t  --  User Query, get single text response  */
 /*
-  Call with:  
+  Call with:
     preface: Explanatory text to print, or NULL.
-    prompt:  Prompt. 
+    prompt:  Prompt.
     echo:    0 = don't echo; 1 = echo; 2 = echo with asterisks.
     help:    Help text (array of strings or NULL) [not used by parser].
     buf:     Pointer to result buffer.
@@ -2775,17 +2775,17 @@ uq_ok(preface,prompt,mask,help,dflt)
     timer:   Optional Timeout
   Returns:
     0:       User said No or Cancel.
-    1        User said Yes or OK.    
+    1        User said Yes or OK.
   Notes:
     preface, prompt, and help as for uq_ok().
 */
 int
 #ifdef CK_ANSIC
-uq_txt(char * preface, char * prompt, int echo, char ** help, char * buf, 
+uq_txt(char * preface, char * prompt, int echo, char ** help, char * buf,
        int buflen, char *dflt, int timer)
 #else /* CK_ANSIC */
 uq_txt(preface,prompt,echo,help,buf,buflen,dflt,timer)
-    char * preface, * prompt, ** help, * buf, * dflt; 
+    char * preface, * prompt, ** help, * buf, * dflt;
     int buflen, echo, timer;
 #endif /* CK_ANSIC */
 {
@@ -2806,7 +2806,7 @@ uq_txt(preface,prompt,echo,help,buf,buflen,dflt,timer)
             return(rc);
         }
     /* Otherwise, the dialog could not be created.  Fallback to text mode */
-    } 
+    }
 #endif /* KUI */
 #ifndef NOLOCAL
 #ifdef OS2
@@ -2837,14 +2837,14 @@ uq_txt(preface,prompt,echo,help,buf,buflen,dflt,timer)
 
 /* u q _ m t x t  --  User Query, get multiple text responses */
 /*
-  Call with:  
+  Call with:
     preface: Explanatory text to print, or NULL.
     help:    Help text (array of strings or NULL) [not used by parser].
     n:       Number of responses wanted.
     field:   Array of struct txtbox, one element per field, see ckuusr.h.
   Returns:
     0:       User said No or Cancel.
-    1        User said Yes or OK.    
+    1        User said Yes or OK.
   Notes:
     preface and help as for uq_ok().
 */
@@ -2853,7 +2853,7 @@ int
 uq_mtxt(char * preface,char **help, int n, struct txtbox field[])
 #else /* CK_ANSIC */
 uq_mtxt(preface,help,n,field)
-    char * preface; char ** help; int n; struct txtbox field[]; 
+    char * preface; char ** help; int n; struct txtbox field[];
 #endif /* CK_ANSIC */
 {
 #ifndef NOLOCAL
@@ -2909,12 +2909,12 @@ uq_mtxt(preface,help,n,field)
 
 /* u q _ f i l e  --  User Query, get file or directory name  */
 /*
-  Call with:  
+  Call with:
     preface: Explanatory text to print, or NULL.
     prompt:  Prompt string.
     fc:      Function code:
 	       1 = input (existing) file
-	       2 = existing directory 
+	       2 = existing directory
 	       3 = create new output file
 	       4 = output file allowing append access
 	       5 = same as 3, but don't label the GUI save button "Download"
@@ -4844,12 +4844,12 @@ dochk() {
 	extern int nolocale;
 	int ok = 0;
         ok = (nolocale ? 0 : 1);
-	if (msgflg) 
+	if (msgflg)
           printf(" locale%s available\n", ok ? "" : " not");
         else if (nolocale && !backgrd)
           printf(" CHECK: locale not available\n");
         return(success = ok);
-    }    
+    }
 #endif /* HAVE_LOCALE */
 #ifndef NOPUSH
     if (!ckstrcmp(line,"push",(int)strlen(line),0)) {
@@ -6467,7 +6467,7 @@ settapi() {
           success = seton(&tapipass);
           tapipass = !tapipass;
           return (success);
-#endif /* NODIAL */        
+#endif /* NODIAL */
       }
       case XYTAPI_LOC: {                /* TAPI LOCATION */
           extern char tapiloc[];
@@ -6536,7 +6536,7 @@ setvareval() {
 #endif /* DCMDBUF */
 
     if ((x = cmkey(varevaltab,
-		   nvarevaltab, 
+		   nvarevaltab,
 		   "Method for evaluating \\%x and \\&x[] variables",
 		   "",
 		   xxstring)) < 0)
@@ -7184,7 +7184,7 @@ setextern() {				/* SET EXTERNAL-PROTOCOL */
 	  return(y);
 	exp_handler = x;
 	break;
-	
+
 #ifdef COMMENT
       case EXP_STDERR:
 	if ((x = cmkey(ooatab,3,"","automatic",xxstring)) < 0)
@@ -7804,7 +7804,7 @@ setprinter(xx) int xx;
 #endif /* OS2ORUNIX */
 
 #ifdef OS2
-    if ( pv[PRN_CS].ival > 0 ) 
+    if ( pv[PRN_CS].ival > 0 )
         prncs = pv[PRN_CS].ival;
 
     if ( pv[PRN_PS].ival > 0 ) {
@@ -9530,7 +9530,7 @@ VOID
 #ifdef CK_ANSIC
 setexitwarn( int x )
 #else
-setexitwarn(x) int x; 
+setexitwarn(x) int x;
 #endif /* CK_ANSIC */
 {
     xitwarn = x;
@@ -9657,7 +9657,7 @@ case XYPAD:                             /* SET PAD ... */
 	    case MCH_FIFO:
 	      return(success = seton(&matchfifo));
 	    case MCH_DOTF:
-	      x = seton(&matchdot); 
+	      x = seton(&matchdot);
 	      if (x < 0) return(x);
 	      dir_dots = -1;
 	      return(success = x);
@@ -9807,7 +9807,7 @@ necessary DLLs did not load.  Use SHOW NETWORK to check network status.\n");
               /* Construct default name  */
               if (z == NET_PIPE) {      /* Named pipe */
                   defnam = "kermit";    /* Default name is always "kermit" */
-              } 
+              }
 #ifdef CK_NETBIOS
 	      else {			/* NetBIOS */
                   if (NetBiosName[0] != SP) { /* If there is already a name, */
@@ -10028,7 +10028,7 @@ necessary DLLs did not load.  Use SHOW NETWORK to check network status.\n");
 			    return(x);
 		      }
 		      ckstrncpy((n == UPW_USER) ? ubuf :
-                        ((n == UPW_PASS) ? pbuf : abuf), s, 
+                        ((n == UPW_PASS) ? pbuf : abuf), s,
                         (n == UPW_AGENT) ? 256 : (LOGINLEN+1));
 		  }
 	      }
@@ -12248,7 +12248,7 @@ case XYDEBU:                            /* SET DEBUG { on, off, session } */
 	    if (ftpisopen()) {		/* If an FTP connection is open */
 		extern int ftp_xfermode; /* change its transfer mode too */
 		ftp_xfermode = xfermode;
-	    }	      
+	    }
 #endif	/* NEWFTP */
             return(success = 1);
 
@@ -12353,16 +12353,16 @@ case XYDEBU:                            /* SET DEBUG { on, off, session } */
         }
 	switch (y) {
 	  case WILD_ON:
-	    wildena = 1; 
+	    wildena = 1;
 	    break;
 	  case WILD_OFF:
-	    wildena = 0; 
+	    wildena = 0;
 	    break;
 	  case WILD_KER:
 	    wildxpand = 0; 		/* These are the previous */
 	    break;			/* hardwired values */
 	  case WILD_SHE:
-	    wildxpand = 1; 
+	    wildxpand = 1;
 	    break;
 	}
         matchdot = z;
@@ -14116,7 +14116,7 @@ case XYDEBU:                            /* SET DEBUG { on, off, session } */
 	if (!setlocale(LC_NUMERIC, s))  {perror("NUMERIC");return(success=0);}
 	if (!setlocale(LC_TIME, s))     {perror("TIME");return(success=0);}
 #endif /* COMMENT */
-	return(success=1); 
+	return(success=1);
 #endif /* HAVE_LOCALE */
 
       default:
