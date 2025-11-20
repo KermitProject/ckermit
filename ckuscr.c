@@ -545,11 +545,7 @@ dologin(cmdstr) char *cmdstr;
 #endif /* CK_ANSIC */
 {
 #ifdef OS2
-#ifdef NT
     SIGTYP (* savealm)(int);		/* Save incoming alarm function */
-#else /* NT */
-    SIGTYP (* volatile savealm)(int);	/* Save incoming alarm function */
-#endif /* NT */
 #else /* OS2 */
     SIGTYP (*savealm)();		/* Save incoming alarm function */
 #endif /* OS2 */
