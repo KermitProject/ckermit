@@ -4068,11 +4068,7 @@ dotype(file, paging, first, head, pat, width, prefix, incs, outcs, outfile, z)
 
 #ifndef MAC
 #ifdef OS2
-#ifdef NT
     SIGTYP (* oldsig)(int);             /* For saving old interrupt trap. */
-#else /* NT */
-    SIGTYP (* volatile oldsig)(int);
-#endif /* NT */
 #else /* OS2 */
     SIGTYP (* oldsig)();
 #endif /* OS2 */
