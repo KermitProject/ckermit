@@ -124,7 +124,7 @@ static char rxresult[RXRESULT+1];
    . ckstrncpy() returns a number.
 
   Use ckstrncpy() when you want to:
-   . Copy a NUL-terminated string into a buffer without overrun, truncating 
+   . Copy a NUL-terminated string into a buffer without overrun, truncating
       it if necessary to fit in the buffer, and null-terminating it.
    . Get the length of the string back.
 
@@ -1494,7 +1494,7 @@ ispattern(s) char * s;
 #endif /* CK_ANSIC */
 {
     int quote = 0, sbflag = 0, sb = 0, cbflag = 0, cb = 0;
-    
+
     char c = 0;
     if (*s == '^') return(1);
     while ((c = *s++)) {
@@ -2202,7 +2202,7 @@ isfloat(s,flag) char *s; int flag;
     Negative...-1 = nearest ten, -2 = nearest 100, -3 = nearest thousand, etc.
   obuf
     Output buffer for string result if desired.
-  obuflen    
+  obuflen
     Length of output buffer.
   Returns:
     Result as CKFLOAT (which is not going to be as exact as the string result)
@@ -2260,7 +2260,7 @@ ckround(fpnum,places,obuf,obuflen)
 	    s += p;			/* Go to desired spot */
 	    if (*s > '4' && *s <= '9')	/* Check value of digit */
 	      carry = 1;
-	    *s = 0;			/* And end the string */ 
+	    *s = 0;			/* And end the string */
 	    s--;			/* Point to last digit */
 	}
     } else if (p == 0) {		/* Rounding to integer */
@@ -2850,7 +2850,7 @@ char *
 #ifdef CK_ANSIC
 ulongtohex( unsigned long z, int n )
 #else
-ulongtohex(z,n) unsigned long z; int n; 
+ulongtohex(z,n) unsigned long z; int n;
 #endif	/* CK_ANSIC */
 /* ulongtohex */ {
     static char hexbuf[17];
@@ -3479,9 +3479,9 @@ cksplit(fc,n1,s1,s2,s3,n2,n3,n4,n5)
 	return(&ck_sval);
     } else {				/* Succeed otherwise */
 	ck_sval.a_size = wordnum;
-/* 
+/*
   Always put a null element at the end of the array.  It does no harm in
-  the normal case, and it's required if we're making an argv[] array to 
+  the normal case, and it's required if we're making an argv[] array to
   pass to execvp().  This element is not included in the count.
 */
 	if (wordnum < MAXWORDS)

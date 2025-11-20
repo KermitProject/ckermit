@@ -27,7 +27,7 @@ char *cknetv = "Network support, 10.0.304, 18 Sep 2023";
 
   Frank da Cruz (fdc@columbia.edu),
     Columbia University Academic Information Systems, New York City.
-  Jeffrey E Altman (jaltman@secure-endpoints.com) -- Primary 
+  Jeffrey E Altman (jaltman@secure-endpoints.com) -- Primary
     maintainer/developer since about 1996.
   netopen() routine for TCP/IP originally by Ken Yap, Rochester University
     (ken@cs.rochester.edu) (no longer at that address).
@@ -1200,7 +1200,7 @@ ttbufr() {                              /* TT Buffer Read */
                   len = BIO_read(bio_err,ssl_err,SSL_ERR_BFSZ);
                   ssl_err[len < SSL_ERR_BFSZ ? len : SSL_ERR_BFSZ] = '\0';
                   debug(F110,"ttbufr SSL_ERROR_SSL",ssl_err,0);
-                  if (ssl_debug_flag)                  
+                  if (ssl_debug_flag)
                       printf(ssl_err);
               } else if (ssl_debug_flag) {
                   debug(F100,"ttbufr SSL_ERROR_SSL","",0);
@@ -1354,7 +1354,7 @@ ttbufr() {                              /* TT Buffer Read */
 #ifdef RLOGCODE                         /* blah */
               if (ttnproto == NP_RLOGIN  ||
                   ttnproto == NP_K4LOGIN || ttnproto == NP_EK4LOGIN ||
-                  ((ttnproto == NP_K5LOGIN || ttnproto == NP_EK5LOGIN) && 
+                  ((ttnproto == NP_K5LOGIN || ttnproto == NP_EK5LOGIN) &&
                   !rlog_inband)
                    )
               {
@@ -4771,7 +4771,7 @@ _PROTOTYP(SIGTYP x25oobh, (int) );
         /* Yes, so if raw port not requested */
 #ifdef COMMENT
 	/* Jeff 2005/12/30 */
-        if (ttnproto != NP_TCPRAW && ttnproto != NP_SSL_RAW && 
+        if (ttnproto != NP_TCPRAW && ttnproto != NP_SSL_RAW &&
 	    ttnproto != NP_TLS_RAW && ttnproto != NP_NONE)
 #else
 	/* fdc 2005/12/04 */
@@ -5086,7 +5086,7 @@ _PROTOTYP(SIGTYP x25oobh, (int) );
                  tcp_http_proxy ? proxycopy :
 #endif /* NOHTTP */
                  (tcp_rdns && host && host->h_name && host->h_name[0]) ?
-                 (char *)host->h_name : (namecopy2[0] ? namecopy2 : 
+                 (char *)host->h_name : (namecopy2[0] ? namecopy2 :
                                         (namecopy[0] ? namecopy : ipaddr)),
                  ipaddr,
                  uidbuf,
@@ -5864,7 +5864,7 @@ nettchk() {                             /* for reading from network */
 	    if ( ssl_active_flag || tls_active_flag ) {
 		ckhexdump("nettchk got real data",&ttibuf[ttibp+ttibn],x);
 		ttibn += x;
-	    } else 
+	    } else
 #endif /* CK_SSL */
 	    {
 		debug(F101,"nettchk socket_read char","",c);
@@ -7627,7 +7627,7 @@ rlog_ini(hostname, port, l_addr, r_addr)
    quote rule so that binary data from the server does not confuse the
    client.  */
 
-int 
+int
 #ifdef CK_ANSIC
 rlog_ctrl( unsigned char *cp, int n )
 #else
@@ -10514,7 +10514,7 @@ http_open(hostname, svcname, use_ssl, rdns_name, rdns_len, agent)
     if (!svcname) svcname = "";
     if (!*hostname || !*svcname) return(-1);
 
-    
+
     service = ckgetservice(hostname,svcname,http_ip,20);
 
     if (service == NULL) {
@@ -10568,15 +10568,15 @@ http_open(hostname, svcname, use_ssl, rdns_name, rdns_len, agent)
             return(-1);
         }
 
-        /* copy the proxyname and remove the service if any so we can use 
-         * it as the hostname 
+        /* copy the proxyname and remove the service if any so we can use
+         * it as the hostname
          */
         ckstrncpy(namecopy,tcp_http_proxy,NAMECPYL);
         p = namecopy;                       /* Was a service requested? */
         while (*p != '\0' && *p != ':') p++; /* Look for colon */
         if (*p == ':') {                    /* Have a colon */
             *p = '\0';                      /* terminate string */
-        }        
+        }
         hostname = namecopy;                /* use proxy as hostname */
     }
 
@@ -10881,10 +10881,10 @@ http_open(hostname, svcname, use_ssl, rdns_name, rdns_len, agent)
 
     if ( tcp_http_proxy ) {
 #ifdef OS2
-        if (!agent) 
+        if (!agent)
 	  agent = "Kermit 95";	/* Default user agent */
 #else
-        if (!agent) 
+        if (!agent)
 	  agent = "C-Kermit";
 #endif /* OS2 */
 
@@ -11697,7 +11697,7 @@ http_inc(timo) int timo;
 	    savefd = ttyfd;
 	    ttyfd = httpfd;
 	    x = nettchk();
-	    ttyfd = savefd;		
+	    ttyfd = savefd;
 	    debug(F101,"http_inc nettchk","",x);
 	    if (x > HTTP_INBUFLEN)
 	      x = HTTP_INBUFLEN;

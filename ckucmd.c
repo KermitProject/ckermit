@@ -3082,7 +3082,7 @@ cmfld(xhlp,xdef,xp,f) char *xhlp, *xdef, **xp; xx_strp f;
 		/*
 		  fdc 2013/12/06 - allow a field to be empty if it is
                   the name of a variable that has no value.
-		*/    
+		*/
                 isavar = (atmbuf[0] == '\\'); /* Remember if it was a var */
 
 		/* Replace by new value -- for MINPUT only keep all chars */
@@ -4103,12 +4103,12 @@ cmdelta(yy, mo, dd, hh, mm, ss, sign, dyy, dmo, ddd, dhh, dmm, dss)
     }
     sprintf(datebuf,"%04d%02d%02d %02d:%02d:%02d",yy,mo,dd,hh,mm,ss);
     d1 = mjd(datebuf);
-    debug(F111,"cmdelta mjd",datebuf,d1);    
+    debug(F111,"cmdelta mjd",datebuf,d1);
 
     t1 = hh * 3600 + mm * 60 + ss;	/* Base time to secs since midnight */
     t2 = dhh * 3600 + dmm * 60 + dss;	/* Delta time, ditto */
     t3 = t1 + (sign * t2);		/* Get sum (or difference) */
-    
+
     d2 = (sign * ddd);			/* Delta days */
     d2 += t3 / 86400L;
 
@@ -4185,7 +4185,7 @@ delta2sec(s,result) char * s; long * result;
 		((c == 'd' || c == 'D')
 		 && !isalpha(*(p2+1)))) { /* Days */
 		ddays = atol(p);
-		if (!*(p2+1))			
+		if (!*(p2+1))
 		  state = 0;
 		else			/* if anything is left */
 		  state = NEED_HRS;	/* now we want hours. */
@@ -4444,8 +4444,8 @@ cmcvtdate(s,t) char * s; int t;
 	    return(NULL);
 	}
         debug(F101,"cmcvtdate asctime month","",xx);
-        monbuf[0] = (xx / 10) + '0'; 
-        monbuf[1] = (xx % 10) + '0'; 
+        monbuf[0] = (xx / 10) + '0';
+        monbuf[1] = (xx % 10) + '0';
         monbuf[2] = NUL;
         daybuf[0] = (s[8] == ' ' ? '0' : s[8]);
         daybuf[1] = s[9];
@@ -4720,7 +4720,7 @@ cmcvtdate(s,t) char * s; int t;
 		fld[++i] = p;		/* No, record pointer to this one */
 	    } else {
 		break;
-	    }	    
+	    }
 	} else if ((*p == 'T' || *p == 't') && isdigit(*(p+1))) { /* Time */
 	    *p++ = NUL;
 	    break;
@@ -4798,16 +4798,16 @@ cmcvtdate(s,t) char * s; int t;
 	if (xx > 0) if (p3[xx-1] == ',') {
 	    p3[xx-1] = NUL;
 	    if (rdigits(p3)) {
-		k = 1;	
+		k = 1;
 		ft[1] = 1;
 	    } else p3[xx-1] = ',';
 	}
     }
     if (k > 1) {			/* We can have only one non-numeric */
 	if (nodate)
-	  makestr(&cmdatemsg,"Unrecognized word in date"); 
+	  makestr(&cmdatemsg,"Unrecognized word in date");
 	else if (!ft[2] && isdigit(*(fld[2])))
-	  makestr(&cmdatemsg,"Invalid date-time separator"); 
+	  makestr(&cmdatemsg,"Invalid date-time separator");
 	else
 	  makestr(&cmdatemsg,"Too many non-numeric fields in date");
 	debug(F111,"cmcvtdate",cmdatemsg,-1);
@@ -4959,7 +4959,7 @@ cmcvtdate(s,t) char * s; int t;
 	return(NULL);
     }
     if (!*p && t == 0) {
-	sprintf(zbuf,"%04d%02d%02d",atoi(year),atoi(month),nday);	
+	sprintf(zbuf,"%04d%02d%02d",atoi(year),atoi(month),nday);
 	dp = zbuf;
 	goto xcvtdate;
     }
@@ -5170,7 +5170,7 @@ cmcvtdate(s,t) char * s; int t;
 		    break;
 		  default:		/* Ignore seconds or fractions */
 		    break;
-		}			
+		}
 	    } else if (*p == ':') {	/* Colon */
 		state++;
 		d = 0;
@@ -5202,7 +5202,7 @@ cmcvtdate(s,t) char * s; int t;
 		    pc++;
 		}
 		p2++;
-	    }		
+	    }
 	    while (*p2 == SP)		/* Skip past spaces */
 	      p2++;
 	    if (!*p2)			/* Anything left? */
@@ -5243,25 +5243,25 @@ cmcvtdate(s,t) char * s; int t;
 			((c == 'd' || c == 'D')
 			 && !isalpha(*(p2+1)))) { /* Days */
 			ddays = atoi(p);
-			if (!*(p2+1))			
+			if (!*(p2+1))
 			  state = 0;
 			else		      /* if anything is left */
 			  state = NEED_HRS;   /* now we want hours. */
 		    } else if ((c == 'W' || c == 'w') && !isalpha(*(p2+1))) {
 			ddays = atoi(p) * 7;   /* weeks... */
-			if (!*(p2+1))			
+			if (!*(p2+1))
 			  state = 0;
 			else
 			  state = NEED_HRS;
 		    } else if ((c == 'M' || c == 'm') && !isalpha(*(p2+1))) {
 			dmonths = atoi(p); /* months... */
-			if (!*(p2+1))			
+			if (!*(p2+1))
 			  state = 0;
 			else
 			  state = NEED_HRS;
 		    } else if ((c == 'Y' || c == 'y') && !isalpha(*(p2+1))) {
 			dyears = atoi(p); /* years... */
-			if (!*(p2+1))			
+			if (!*(p2+1))
 			  state = 0;
 			else
 			  state = NEED_HRS;
@@ -5626,7 +5626,7 @@ cmdiffdate(d1,d2) char * d1, * d2;
     mm2 = atoi(&d2[12]);
     ss2 = atoi(&d2[15]);
     ckstrncpy(d2buf,d2,9);
-    
+
     jd1 = mjd(d1buf);			/* Get the two Julian dates */
     jd2 = mjd(d2buf);
     f1 = ss1 + 60 * mm1 + 3600 * hh1;	/* Convert first time to seconds */
@@ -5636,9 +5636,9 @@ cmdiffdate(d1,d2) char * d1, * d2;
     debug(F101,"cmdiffdate f1","",f1);
     debug(F101,"cmdiffdate jd2","",jd2);
     debug(F101,"cmdiffdate f2","",f2);
-  
+
     if (jd2 > jd1 || (jd1 == jd2 && f2 > f1)) {
-        sign = -1; 
+        sign = -1;
         if (f1 > f2) {jd2--; f2 += 86400L;}
         jd = jd2 - jd1;
         fx = f2 - f1;
@@ -5650,7 +5650,7 @@ cmdiffdate(d1,d2) char * d1, * d2;
     }
     debug(F111,"cmdiffdate sign jd",sign<0?"-":"+",jd);
     debug(F101,"cmdiffdate fx","",fx);
-  
+
     hh = (int) (fx / 3600L);		/* Convert seconds to hh:mm:ss */
 
     mm = (int) (fx % 3600L) / 60L;
@@ -6983,7 +6983,7 @@ CMDIRPARSE:
 #ifdef FUNCTIONTEST
                         debug(F110,"XXX atmbuf",atmbuf,0);
                         debug(F110,"XXX pp",pp,0);
-                        debug(F101,"XXX brkchar","",c);                    
+                        debug(F101,"XXX brkchar","",c);
 #endif  /* FUNCTIONTEST */
 			inword = cmflgs = 0;
 			return(0);
@@ -7939,7 +7939,7 @@ cmdconchk() {
 #ifdef __FILE_defined                   /* glibc 2.28 1 Aug 2018 */
     x = (int) ((stdin->_IO_read_end) - (stdin->_IO_read_ptr));
     debug(F101,"cmdconchk __FILE_defined","",x);
-#else /* __FILE_defined */ 
+#else /* __FILE_defined */
 #ifdef _IO_file_flags              /* Linux (glibc 2.28 removed this symbol */
     x = (int) ((stdin->_IO_read_end) - (stdin->_IO_read_ptr));
     debug(F101,"cmdconchk _IO_file_flags","",x);
@@ -8548,7 +8548,7 @@ xlookup(table,cmd,n,x) struct keytab table[]; char *cmd; int n, *x;
 	if (one) {			/* Name is one char long */
 	    if (!*(s+1)) {
 		if (x) *x = i;
-                *cmd = c; 
+                *cmd = c;
 		return(table[i].kwval);	/* So is table entry */
 	    }
 	} else {			/* Otherwise do string comparison */

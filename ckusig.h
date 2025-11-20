@@ -76,4 +76,3 @@ _PROTOTYP( int cc_alrm_execute,
 	   ck_sigfunc) );
 
 /* End of ckusig.h */
-

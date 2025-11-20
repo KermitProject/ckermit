@@ -2796,7 +2796,7 @@ int
     *s = NUL;			   /* Temporarily null-terminate data field */
     if (xunchar(chk) != chk1((CHAR *)(buf+1),buflen-2)) { /* Check it */
 	/*
-	  In C-Kermit 9.0 and later, an S or I packet can have a 
+	  In C-Kermit 9.0 and later, an S or I packet can have a
 	  Type 3 Block check ("help set block-check" for details).
 	*/
 	unsigned crc;			/* Failed... Try Type 3 block check */

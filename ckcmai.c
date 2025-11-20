@@ -98,7 +98,7 @@ int offtsize = 0;                       /* Size of OFF_T */
   The C-Kermit Version number is major.minor.edit (integers).
   Major version always goes up.
 
-  The Minor version is an artifact from the DECSYSTEM-20 versioning 
+  The Minor version is an artifact from the DECSYSTEM-20 versioning
   system and hasn't been used since C-Kermit 7.1.
 
   The Edit number is sequential, always goes up, but there can be gaps.
@@ -106,7 +106,7 @@ int offtsize = 0;                       /* Size of OFF_T */
   is no longer shown as of C-Kermit 10.0, but we still need to keep it,
   and it should always be incremented, for the benefit of packagers like
   Debian who depend on it.
-  
+
   Also the custom-format version numbers for the original 1980s Macintosh is
   gone as there is no more Mac Kermit (for the original Macintosh), just
   C-Kermit for each platform (except the original Mac) and Kermit 95.
@@ -2767,7 +2767,7 @@ makever ( )
         return;
     }
     x += y + 1;
-  
+
     if (*ck_s_who) {
         y = strlen(ck_s_who);
         if (CKVERLEN < x + y + 1)
@@ -3660,7 +3660,7 @@ MAINNAME( argc, argv ) int argc; char **argv;
 #ifdef HAVE_LOCALE
 	if (nolocale) {                 /* --nolocale option on command line */
             setlocale(LC_ALL, "C");     /* Restore our locale to default */
-	}	
+	}
 #endif /* HAVE_LOCALE */
 
 #ifndef NOTCPIP
@@ -3743,7 +3743,7 @@ MAINNAME( argc, argv ) int argc; char **argv;
 #endif /* NOCMDL */
 #else /* not NOICP */
 #ifdef HAVE_LOCALE
-    if (!nolocale) {	
+    if (!nolocale) {
 	/* Can also disable locale processing by setting K_NOLOCALE=1 */
 	char *s = getenv("K_NOLOCALE");	/* environment variable */
 	if (s)

@@ -1778,7 +1778,7 @@ conect() {
     debug(F101,"CONNECT ttvt ok, escape","",escape);
 
     debug(F101,"CONNECT carrier-watch","",carrier);
-    if ((!network 
+    if ((!network
 #ifdef TN_COMPORT
 	  || istncomport()
 #endif /* TN_COMPORT */
@@ -2605,7 +2605,7 @@ doesc(c) char c;
 	    conoll(temp);
             if (hwparity)
               sprintf(temp," Parity[hardware]: %s",parnam((char)hwparity));
-            else	    
+            else
   	      sprintf(temp," Parity: %s", parnam((char)parity));
 	    conoll(temp);
 	    sprintf(temp," Autodownload: %s", autodl ? "on" : "off");
