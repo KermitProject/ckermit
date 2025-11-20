@@ -2610,12 +2610,7 @@ transmit(s,t,xlate,binary,xxecho) char *s; char t; int xlate, binary, xxecho;
 #else
     int count = 0;
 #ifdef OS2
-#ifdef NT
     SIGTYP (* oldsig)(int);             /* For saving old interrupt trap. */
-#else /* NT */
-    SIGTYP (* volatile oldsig)(int);
-#endif /* NT */
-
 #else /* OS2 */
     SIGTYP (* oldsig)();
 #endif /* OS2 */
@@ -3302,11 +3297,7 @@ xlate(fin, fout, csin, csout) char *fin, *fout; int csin, csout;
     extern int k95stdout;
     extern int wherex[], wherey[];
     extern unsigned char colorcmd;
-#ifdef NT
     SIGTYP (* oldsig)(int);             /* For saving old interrupt trap. */
-#else /* NT */
-    SIGTYP (* volatile oldsig)(int);    /* For saving old interrupt trap. */
-#endif /* NT */
 #else /* OS2 */
     SIGTYP (* oldsig)();
 #endif /* OS2 */
