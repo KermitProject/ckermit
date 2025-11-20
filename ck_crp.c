@@ -99,11 +99,7 @@ int cmd_quoting = 0;
 #ifdef OS2
 /* Copied from ckctel.c */
 char *
-#ifdef CK_ANSIC
 tel_unk(int opt)                        /* "UNKNOWN-%u" string. */
-#else
-tel_unk(opt) int opt;
-#endif /* CK_ANSIC */
 {
   /* 2024-03-27 SMS.  Added (decimal) value to "UNKNOWN" messages. */
   static char val_str[ 20];
@@ -114,7 +110,8 @@ tel_unk(opt) int opt;
 
 #ifndef TELOPT_MACRO
 int
-telopt_index(opt) int opt; {
+telopt_index(int opt)
+{
     if ( opt >= 0 && opt <= TELOPT_SEND_URL )
         return(opt);
     else if ( opt >= TELOPT_PRAGMA_LOGON && opt <= TELOPT_PRAGMA_HEARTBEAT )
@@ -124,13 +121,15 @@ telopt_index(opt) int opt; {
 }
 
 int
-telopt_ok(opt) int opt; {
+telopt_ok(int opt)
+{
     return((opt >= TELOPT_BINARY && opt <= TELOPT_SEND_URL) ||
         (opt >= TELOPT_PRAGMA_LOGON && opt <= TELOPT_PRAGMA_HEARTBEAT));
 }
 
 CHAR *
-telopt(opt) int opt; {
+telopt(int opt)
+{
     if ( telopt_ok(opt) )
         return(telopts[telopt_index(opt)]);
     else
@@ -198,7 +197,8 @@ tn_debug( char * s )
 
 static char myprtfstr[4096];
 int
-Vscrnprintf(const char * format, ...) {
+Vscrnprintf(const char * format, ...)
+{
     int i, len, rc=0;
     char *cp;
     va_list ap;
@@ -368,8 +368,7 @@ static Block weak_keys[NUM_WEAK_KEY]={
         {0xFE,0xE0,0xFE,0xE0,0xFE,0xF1,0xFE,0xF1}};
 
 int
-ck_des_is_weak_key(key)
-Block key;
+ck_des_is_weak_key(Block key)
 {
     int i;
 
@@ -397,8 +396,7 @@ Block key;
 #include <sys/time.h>
 
 unsigned long
-unix_time_gmt_unixsec (usecptr)
-    unsigned long  *usecptr;
+unix_time_gmt_unixsec(unsigned long *usecptr)
 {
     struct timeval  now;
 
@@ -431,7 +429,7 @@ des_new_random_key(Block B)
     /* WARNING:
        This might need to have the "rc = " removed because this
        is VOID in later, and maybe even all, versions.
-    */       
+    */
     rc = des_random_key(B);
     return(rc);
 }
@@ -934,7 +932,7 @@ static struct key_info {
     int keylen;
     int dir;
     int *modep;
-    Encryptions *(*getcrypt)();
+    Encryptions *(*getcrypt)(int);
 } ki[2] = {
     { { 0 }, 0, DIR_ENCRYPT, &encrypt_mode, findencryption },
     { { 0 }, 0, DIR_DECRYPT, &decrypt_mode, finddecryption },
@@ -1081,7 +1079,7 @@ encrypt_support(unsigned char *_typelist, int _cnt)
 encrypt_support(_typelist, _cnt) unsigned char * _typelist; int _cnt;
 #endif
 {
-    register int type, use_type = 0;
+    int type, use_type = 0;
     unsigned char * typelist = _typelist;
     int cnt = _cnt;
     Encryptions *ep;
@@ -1155,7 +1153,7 @@ encrypt_is(data, cnt) unsigned char *data; int cnt;
 #endif /* CK_ANSIC */
 {
     Encryptions *ep;
-    register int type, ret;
+    int type, ret;
 
     if (--cnt < 0)
         return(-1);
@@ -1219,7 +1217,7 @@ encrypt_reply(data, cnt) unsigned char *data; int cnt;
 #endif
 {
     Encryptions *ep;
-    register int ret, type;
+    int ret, type;
 
     if (--cnt < 0)
         return(-1);
@@ -1469,7 +1467,7 @@ encrypt_keyid(kp, keyid, len)
 {
     Encryptions *ep;
     int dir = kp->dir;
-    register int ret = 0;
+    int ret = 0;
 
     if (!(ep = (*kp->getcrypt)(*kp->modep))) {
         if (len == 0)
@@ -1589,8 +1587,8 @@ encrypt_start_output(type) int type;
 #endif
 {
     Encryptions *ep;
-    register unsigned char *p;
-    register int i;
+    unsigned char *p;
+    int i;
 
 #ifdef CK_SSL
     if (TELOPT_SB(TELOPT_START_TLS).start_tls.me_follows)
@@ -1740,8 +1738,8 @@ encrypt_send_request_start(VOID)
 encrypt_send_request_start()
 #endif
 {
-    register unsigned char *p;
-    register int i;
+    unsigned char *p;
+    int i;
 
 #ifdef CK_SSL
     if (TELOPT_SB(TELOPT_START_TLS).start_tls.me_follows)
@@ -2059,7 +2057,7 @@ ofb64_init(server)
 
 void
 fb64_init(fbp)
-    register struct des_fb *fbp;
+    struct des_fb *fbp;
 {
     memset((void *)fbp, 0, sizeof(*fbp));
     fbp->state[0] = fbp->state[1] = xFAILED;
@@ -2100,7 +2098,7 @@ fb64_start(fbp, dir, server)
 {
     int x;
     unsigned char *p;
-    register int state;
+    int state;
 
     switch (dir) {
     case DIR_DECRYPT:
@@ -2225,7 +2223,7 @@ fb64_is(data, cnt, fbp)
     struct des_fb *fbp;
 {
     unsigned char *p;
-    register int state = fbp->state[DIR_DECRYPT-1];
+    int state = fbp->state[DIR_DECRYPT-1];
 
     if (cnt-- < 1)
         goto failure;
@@ -2354,7 +2352,7 @@ fb64_reply(data, cnt, fbp)
     int cnt;
     struct des_fb *fbp;
 {
-    register int state = fbp->state[DIR_ENCRYPT-1];
+    int state = fbp->state[DIR_ENCRYPT-1];
 
     if (cnt-- < 1)
         goto failure;
@@ -2536,7 +2534,7 @@ fb64_keyid(dir, kp, lenp, fbp)
     unsigned char *kp;
     struct des_fb *fbp;
 {
-    register int state = fbp->state[dir-1];
+    int state = fbp->state[dir-1];
 
     if (*lenp != 1 || (*kp != '\0')) {
         *lenp = 0;
@@ -2558,7 +2556,7 @@ fb64_printsub(data, cnt, buf, buflen, type)
     int cnt, buflen;
 {
     char lbuf[64];
-    register int i;
+    int i;
     char *cp;
 
     buf[buflen-1] = '\0';               /* make sure it's NULL terminated */
@@ -2625,7 +2623,7 @@ ofb64_printsub(data, cnt, buf, buflen)
 void
 fb64_stream_iv(seed, stp)
     Block seed;
-    register struct des_stinfo *stp;
+    struct des_stinfo *stp;
 {
     int rc=0;
 
@@ -2660,7 +2658,7 @@ fb64_stream_iv(seed, stp)
 void
 fb64_stream_key(key, stp)
     Block key;
-    register struct des_stinfo *stp;
+    struct des_stinfo *stp;
 {
     int rc = 0;
 
@@ -2725,11 +2723,11 @@ fb64_stream_key(key, stp)
 
 void
 cfb64_encrypt(s, c)
-    register unsigned char *s;
+    unsigned char *s;
     int c;
 {
-    register struct des_stinfo *stp = &des_fb[CFB].streams[DIR_ENCRYPT-1];
-    register int index;
+    struct des_stinfo *stp = &des_fb[CFB].streams[DIR_ENCRYPT-1];
+    int index;
 
     index = stp->str_index;
     while (c-- > 0) {
@@ -2756,7 +2754,7 @@ int
 cfb64_decrypt(data)
     int data;
 {
-    register struct des_stinfo *stp = &des_fb[CFB].streams[DIR_DECRYPT-1];
+    struct des_stinfo *stp = &des_fb[CFB].streams[DIR_DECRYPT-1];
     int index;
 
     if (data == -1) {
@@ -2809,11 +2807,11 @@ cfb64_decrypt(data)
  */
 void
 ofb64_encrypt(s, c)
-    register unsigned char *s;
+    unsigned char *s;
     int c;
 {
-    register struct des_stinfo *stp = &des_fb[OFB].streams[DIR_ENCRYPT-1];
-    register int index;
+    struct des_stinfo *stp = &des_fb[OFB].streams[DIR_ENCRYPT-1];
+    int index;
 
     index = stp->str_index;
     while (c-- > 0) {
@@ -2837,7 +2835,7 @@ int
 ofb64_decrypt(data)
     int data;
 {
-    register struct des_stinfo *stp = &des_fb[OFB].streams[DIR_DECRYPT-1];
+    struct des_stinfo *stp = &des_fb[OFB].streams[DIR_DECRYPT-1];
     int index;
 
     if (data == -1) {
@@ -2899,7 +2897,7 @@ des3_ofb64_init(server)
 
 void
 des3_fb64_init(fbp)
-    register struct des3_fb *fbp;
+    struct des3_fb *fbp;
 {
     memset((void *)fbp, 0, sizeof(*fbp));
     fbp->state[0] = fbp->state[1] = xFAILED;
@@ -2940,7 +2938,7 @@ des3_fb64_start(fbp, dir, server)
 {
     int x;
     unsigned char *p;
-    register int state;
+    int state;
 
     switch (dir) {
     case DIR_DECRYPT:
@@ -3054,7 +3052,7 @@ des3_fb64_is(data, cnt, fbp)
     struct des3_fb *fbp;
 {
     unsigned char *p;
-    register int state = fbp->state[DIR_DECRYPT-1];
+    int state = fbp->state[DIR_DECRYPT-1];
 
     if (cnt-- < 1)
         goto failure;
@@ -3183,7 +3181,7 @@ des3_fb64_reply(data, cnt, fbp)
     int cnt;
     struct des3_fb *fbp;
 {
-    register int state = fbp->state[DIR_ENCRYPT-1];
+    int state = fbp->state[DIR_ENCRYPT-1];
 
     if (cnt-- < 1)
         goto failure;
@@ -3405,7 +3403,7 @@ des3_fb64_keyid(dir, kp, lenp, fbp)
     unsigned char *kp;
     struct des3_fb *fbp;
 {
-    register int state = fbp->state[dir-1];
+    int state = fbp->state[dir-1];
 
     if (*lenp != 1 || (*kp != '\0')) {
         *lenp = 0;
@@ -3427,7 +3425,7 @@ des3_fb64_printsub(data, cnt, buf, buflen, type)
     int cnt, buflen;
 {
     char lbuf[64];
-    register int i;
+    int i;
     char *cp;
 
     buf[buflen-1] = '\0';               /* make sure it's NULL terminated */
@@ -3494,7 +3492,7 @@ des3_ofb64_printsub(data, cnt, buf, buflen)
 void
 des3_fb64_stream_iv(seed, stp)
     Block seed;
-    register struct des3_stinfo *stp;
+    struct des3_stinfo *stp;
 {
     int rc=0, i = 0;;
 
@@ -3527,7 +3525,7 @@ des3_fb64_stream_iv(seed, stp)
 void
 des3_fb64_stream_key(key, stp)
     Block * key;
-    register struct des3_stinfo *stp;
+    struct des3_stinfo *stp;
 {
     int rc = 0, i = 0;
 
@@ -3586,11 +3584,11 @@ des3_fb64_stream_key(key, stp)
 
 void
 des3_cfb64_encrypt(s, c)
-    register unsigned char *s;
+    unsigned char *s;
     int c;
 {
-    register struct des3_stinfo *stp = &des3_fb[CFB].streams[DIR_ENCRYPT-1];
-    register int index;
+    struct des3_stinfo *stp = &des3_fb[CFB].streams[DIR_ENCRYPT-1];
+    int index;
 
     index = stp->str_index;
     while (c-- > 0) {
@@ -3623,7 +3621,7 @@ int
 des3_cfb64_decrypt(data)
     int data;
 {
-    register struct des3_stinfo *stp = &des3_fb[CFB].streams[DIR_DECRYPT-1];
+    struct des3_stinfo *stp = &des3_fb[CFB].streams[DIR_DECRYPT-1];
     int index;
 
     if (data == -1) {
@@ -3686,11 +3684,11 @@ des3_cfb64_decrypt(data)
  */
 void
 des3_ofb64_encrypt(s, c)
-    register unsigned char *s;
+    unsigned char *s;
     int c;
 {
-    register struct des3_stinfo *stp = &des3_fb[OFB].streams[DIR_ENCRYPT-1];
-    register int index;
+    struct des3_stinfo *stp = &des3_fb[OFB].streams[DIR_ENCRYPT-1];
+    int index;
 
     index = stp->str_index;
     while (c-- > 0) {
@@ -3720,7 +3718,7 @@ int
 des3_ofb64_decrypt(data)
     int data;
 {
-    register struct des3_stinfo *stp = &des3_fb[OFB].streams[DIR_DECRYPT-1];
+    struct des3_stinfo *stp = &des3_fb[OFB].streams[DIR_DECRYPT-1];
     int index;
 
     if (data == -1) {
@@ -3947,16 +3945,14 @@ static int _cast_ofb64_decrypt P((int, struct cast_stinfo *));
 
 #ifndef CAST_EXPORT_ENCRYPTION
 void
-cast_cfb64_init(server)
-        int server;
+cast_cfb64_init(int server)
 {
         cast_fb64_init(&cast_fb[CFB_128]);
         cast_fb[CFB_128].fb_feed[4] = ENCTYPE_CAST128_CFB64;
 }
 
 void
-cast_ofb64_init(server)
-        int server;
+cast_ofb64_init(int server)
 {
         cast_fb64_init(&cast_fb[OFB_128]);
         cast_fb[OFB_128].fb_feed[4] = ENCTYPE_CAST128_OFB64;
@@ -3964,24 +3960,21 @@ cast_ofb64_init(server)
 #endif
 
 void
-castexp_cfb64_init(server)
-        int server;
+castexp_cfb64_init(int server)
 {
         cast_fb64_init(&cast_fb[CFB_40]);
         cast_fb[CFB_40].fb_feed[4] = ENCTYPE_CAST5_40_CFB64;
 }
 
 void
-castexp_ofb64_init(server)
-        int server;
+castexp_ofb64_init(int server)
 {
         cast_fb64_init(&cast_fb[OFB_40]);
         cast_fb[OFB_40].fb_feed[4] = ENCTYPE_CAST5_40_OFB64;
 }
 
 static void
-cast_fb64_init(fbp)
-    register struct cast_fb *fbp;
+cast_fb64_init(struct cast_fb *fbp)
 {
     memset((void *)fbp, 0, sizeof(*fbp));
     fbp->key_isset = 0;
@@ -4002,48 +3995,37 @@ cast_fb64_init(fbp)
  */
 #ifndef CAST_EXPORT_ENCRYPTION
 int
-cast_cfb64_start(dir, server)
-    int dir;
-    int server;
+cast_cfb64_start(int dir, int server)
 {
     return(cast_fb64_start(&cast_fb[CFB_128], dir, server));
 }
 
 int
-cast_ofb64_start(dir, server)
-    int dir;
-    int server;
+cast_ofb64_start(int dir, int server)
 {
     return(cast_fb64_start(&cast_fb[OFB_128], dir, server));
 }
 #endif
 
 int
-castexp_cfb64_start(dir, server)
-    int dir;
-    int server;
+castexp_cfb64_start(int dir, int server)
 {
     return(cast_fb64_start(&cast_fb[CFB_40], dir, server));
 }
 
 int
-castexp_ofb64_start(dir, server)
-    int dir;
-    int server;
+castexp_ofb64_start(int dir, int server)
 {
     return(cast_fb64_start(&cast_fb[OFB_40], dir, server));
 }
 
 static int
-cast_fb64_start(fbp, dir, server)
-    struct cast_fb *fbp;
-    int dir;
-    int server;
+cast_fb64_start(struct cast_fb *fbp, int dir, int server)
 {
     Block b;
     int x;
     unsigned char *p;
-    register int state;
+    int state;
 
     switch (dir) {
     case DIR_DECRYPT:
@@ -4107,48 +4089,37 @@ cast_fb64_start(fbp, dir, server)
  */
 #ifndef CAST_EXPORT_ENCRYPTION
 int
-cast_cfb64_is(data, cnt)
-    unsigned char *data;
-    int cnt;
+cast_cfb64_is(unsigned char *data, int cnt)
 {
     return(cast_fb64_is(data, cnt, &cast_fb[CFB_128]));
 }
 
 int
-cast_ofb64_is(data, cnt)
-    unsigned char *data;
-    int cnt;
+cast_ofb64_is(unsigned char *data, int cnt)
 {
     return(cast_fb64_is(data, cnt, &cast_fb[OFB_128]));
 }
 #endif
 
 int
-castexp_cfb64_is(data, cnt)
-    unsigned char *data;
-    int cnt;
+castexp_cfb64_is(unsigned char *data, int cnt)
 {
     return(cast_fb64_is(data, cnt, &cast_fb[CFB_40]));
 }
 
 int
-castexp_ofb64_is(data, cnt)
-    unsigned char *data;
-    int cnt;
+castexp_ofb64_is(unsigned char *data, int cnt)
 {
     return(cast_fb64_is(data, cnt, &cast_fb[OFB_40]));
 }
 
 static int
-cast_fb64_is(data, cnt, fbp)
-    unsigned char *data;
-    int cnt;
-    struct cast_fb *fbp;
+cast_fb64_is(unsigned char *data,int cnt, struct cast_fb *fbp)
 {
     int x;
     unsigned char *p;
     Block b;
-    register int state = fbp->state[DIR_DECRYPT-1];
+    int state = fbp->state[DIR_DECRYPT-1];
 
     if (cnt-- < 1)
         goto failure;
@@ -4216,48 +4187,37 @@ cast_fb64_is(data, cnt, fbp)
  */
 #ifndef CAST_EXPORT_ENCRYPTION
 int
-cast_cfb64_reply(data, cnt)
-    unsigned char *data;
-    int cnt;
+cast_cfb64_reply(unsigned char *data, int cnt)
 {
     return(cast_fb64_reply(data, cnt, &cast_fb[CFB_128]));
 }
 
 int
-cast_ofb64_reply(data, cnt)
-    unsigned char *data;
-    int cnt;
+cast_ofb64_reply(unsigned char *data, int cnt)
 {
     return(cast_fb64_reply(data, cnt, &cast_fb[OFB_128]));
 }
 #endif
 
 int
-castexp_cfb64_reply(data, cnt)
-    unsigned char *data;
-    int cnt;
+castexp_cfb64_reply(unsigned char *data, int cnt)
 {
     return(cast_fb64_reply(data, cnt, &cast_fb[CFB_40]));
 }
 
 int
-castexp_ofb64_reply(data, cnt)
-    unsigned char *data;
-    int cnt;
+castexp_ofb64_reply(unsigned char *data, int cnt)
 {
     return(cast_fb64_reply(data, cnt, &cast_fb[OFB_40]));
 }
 
 static int
-cast_fb64_reply(data, cnt, fbp)
-    unsigned char *data;
-    int cnt;
-    struct cast_fb *fbp;
+cast_fb64_reply(unsigned char *data, int cnt, struct cast_fb *fbp)
 {
     int x;
     unsigned char *p;
     Block b;
-    register int state = fbp->state[DIR_ENCRYPT-1];
+    int state = fbp->state[DIR_ENCRYPT-1];
 
     if (cnt-- < 1)
         goto failure;
@@ -4295,34 +4255,26 @@ cast_fb64_reply(data, cnt, fbp)
 
 #ifndef CAST_EXPORT_ENCRYPTION
 int
-cast_cfb64_session(key, server)
-    Session_Key *key;
-    int server;
+cast_cfb64_session(Session_Key *key, int server)
 {
     return(cast_fb64_session(key, server, &cast_fb[CFB_128], 1));
 }
 
 int
-cast_ofb64_session(key, server)
-    Session_Key *key;
-    int server;
+cast_ofb64_session(Session_Key *key, int server)
 {
     return(cast_fb64_session(key, server, &cast_fb[OFB_128], 1));
 }
 #endif
 
 int
-castexp_cfb64_session(key, server)
-    Session_Key *key;
-    int server;
+castexp_cfb64_session(Session_Key *key, int server)
 {
     return(cast_fb64_session(key, server, &cast_fb[CFB_40], 0));
 }
 
 int
-castexp_ofb64_session(key, server)
-    Session_Key *key;
-    int server;
+castexp_ofb64_session(Session_Key *key, int server)
 {
     return(cast_fb64_session(key, server, &cast_fb[OFB_40], 0));
 }
@@ -4331,11 +4283,7 @@ castexp_ofb64_session(key, server)
 #define CAST5_40_KEYLEN  5      /*  40 bits */
 
 static int
-cast_fb64_session(key, server, fbp, fs)
-    Session_Key *key;
-    int server;
-    struct cast_fb *fbp;
-    int fs;
+cast_fb64_session(Session_Key *key, int server, struct cast_fb *fbp, int fs)
 {
     int klen;
     unsigned char * kptr;
@@ -4402,45 +4350,34 @@ cast_fb64_session(key, server, fbp, fs)
  */
 #ifndef CAST_EXPORT_ENCRYPTION
 int
-cast_cfb64_keyid(dir, kp, lenp)
-    int dir, *lenp;
-    unsigned char *kp;
+cast_cfb64_keyid(int dir, unsigned char *kp, int *lenp)
 {
     return(cast_fb64_keyid(dir, kp, lenp, &cast_fb[CFB_128]));
 }
 
 int
-cast_ofb64_keyid(dir, kp, lenp)
-    int dir, *lenp;
-    unsigned char *kp;
+cast_ofb64_keyid(int dir, unsigned char *kp, int *lenp)
 {
     return(cast_fb64_keyid(dir, kp, lenp, &cast_fb[OFB_128]));
 }
 #endif
 
 int
-castexp_cfb64_keyid(dir, kp, lenp)
-    int dir, *lenp;
-    unsigned char *kp;
+castexp_cfb64_keyid(int dir, unsigned char *kp, int *lenp)
 {
     return(cast_fb64_keyid(dir, kp, lenp, &cast_fb[CFB_40]));
 }
 
 int
-castexp_ofb64_keyid(dir, kp, lenp)
-    int dir, *lenp;
-    unsigned char *kp;
+castexp_ofb64_keyid(int dir, unsigned char *kp, int *lenp)
 {
     return(cast_fb64_keyid(dir, kp, lenp, &cast_fb[OFB_40]));
 }
 
 static int
-cast_fb64_keyid(dir, kp, lenp, fbp)
-    int dir, *lenp;
-    unsigned char *kp;
-    struct cast_fb *fbp;
+cast_fb64_keyid(int dir, unsigned char *kp, int *lenp, struct cast_fb *fbp)
 {
-    register int state = fbp->state[dir-1];
+    int state = fbp->state[dir-1];
 
     if (*lenp != 1 || (*kp != '\0')) {
         *lenp = 0;
@@ -4456,12 +4393,11 @@ cast_fb64_keyid(dir, kp, lenp, fbp)
 }
 
 static void
-cast_fb64_printsub(data, cnt, buf, buflen, type)
-    unsigned char *data, *buf, *type;
-    int cnt, buflen;
+cast_fb64_printsub(unsigned char *data, int cnt, unsigned char *buf,
+		   int buflen, unsigned char *type)
 {
     char lbuf[64];
-    register int i;
+    int i;
     char *cp;
 
     buf[buflen-1] = '\0';               /* make sure it's NULL terminated */
@@ -4499,25 +4435,21 @@ cast_fb64_printsub(data, cnt, buf, buflen, type)
 }
 
 void
-cast_cfb64_printsub(data, cnt, buf, buflen)
-    unsigned char *data, *buf;
-    int cnt, buflen;
+cast_cfb64_printsub(unsigned char *data, int cnt, unsigned char *buf,
+		    int buflen)
 {
     cast_fb64_printsub(data, cnt, buf, buflen, "CFB64");
 }
 
 void
-cast_ofb64_printsub(data, cnt, buf, buflen)
-    unsigned char *data, *buf;
-    int cnt, buflen;
+cast_ofb64_printsub(unsigned char *data, int cnt, unsigned char *buf,
+		    int buflen)
 {
     cast_fb64_printsub(data, cnt, buf, buflen, "OFB64");
 }
 
 static void
-cast_fb64_stream_iv(seed, stp)
-    Block seed;
-    register struct cast_stinfo *stp;
+cast_fb64_stream_iv(Block seed, struct cast_stinfo *stp)
 {
     memcpy((void *)stp->str_iv, (void *)seed, sizeof(Block));
     memcpy((void *)stp->str_output, (void *)seed, sizeof(Block));
@@ -4526,10 +4458,7 @@ cast_fb64_stream_iv(seed, stp)
 }
 
 static void
-cast_fb64_stream_key(key, stp, fs)
-    unsigned char * key;
-    register struct cast_stinfo *stp;
-    int fs;
+cast_fb64_stream_key(unsigned char *key, struct cast_stinfo *stp, int fs)
 {
 #ifndef CAST_EXPORT_ENCRYPTION
     if(fs)
@@ -4566,29 +4495,22 @@ cast_fb64_stream_key(key, stp, fs)
  */
 #ifndef CAST_EXPORT_ENCRYPTION
 void
-cast_cfb64_encrypt(s, c)
-        register unsigned char *s;
-        int c;
+cast_cfb64_encrypt(unsigned char *s, int c)
 {
     _cast_cfb64_encrypt(s, c, &cast_fb[CFB_128].streams[DIR_ENCRYPT-1]);
 }
 #endif
 
 void
-castexp_cfb64_encrypt(s, c)
-    register unsigned char *s;
-    int c;
+castexp_cfb64_encrypt(unsigned char *s, int c)
 {
     _cast_cfb64_encrypt(s, c, &cast_fb[CFB_40].streams[DIR_ENCRYPT-1]);
 }
 
 static void
-_cast_cfb64_encrypt(s, c, stp)
-    register unsigned char *s;
-    int c;
-    register struct cast_stinfo *stp;
+_cast_cfb64_encrypt(unsigned char *s, int c, struct cast_stinfo *stp)
 {
-    register int index;
+    int index;
 
     index = stp->str_index;
     while (c-- > 0) {
@@ -4609,24 +4531,20 @@ _cast_cfb64_encrypt(s, c, stp)
 
 #ifndef CAST_EXPORT_ENCRYPTION
 int
-cast_cfb64_decrypt(data)
-    int data;
+cast_cfb64_decrypt(int data)
 {
     return _cast_cfb64_decrypt(data, &cast_fb[CFB_128].streams[DIR_DECRYPT-1]);
 }
 #endif
 
 int
-castexp_cfb64_decrypt(data)
-    int data;
+castexp_cfb64_decrypt(int data)
 {
     return _cast_cfb64_decrypt(data, &cast_fb[CFB_40].streams[DIR_DECRYPT-1]);
 }
 
 static int
-_cast_cfb64_decrypt(data, stp)
-    int data;
-    register struct cast_stinfo *stp;
+_cast_cfb64_decrypt(int data, struct cast_stinfo *stp)
 {
     int index;
 
@@ -4676,29 +4594,22 @@ _cast_cfb64_decrypt(data, stp)
  */
 #ifndef CAST_EXPORT_ENCRYPTION
 void
-cast_ofb64_encrypt(s, c)
-    register unsigned char *s;
-    int c;
+cast_ofb64_encrypt(unsigned char *s, int c)
 {
     _cast_ofb64_encrypt(s, c, &cast_fb[OFB_128].streams[DIR_ENCRYPT-1]);
 }
 #endif
 
 void
-castexp_ofb64_encrypt(s, c)
-    register unsigned char *s;
-    int c;
+castexp_ofb64_encrypt(unsigned char *s, int c)
 {
   _cast_ofb64_encrypt(s, c, &cast_fb[OFB_40].streams[DIR_ENCRYPT-1]);
 }
 
 static void
-_cast_ofb64_encrypt(s, c, stp)
-    register unsigned char *s;
-    int c;
-    register struct cast_stinfo *stp;
+_cast_ofb64_encrypt(unsigned char *s, int c, struct cast_stinfo *stp)
 {
-    register int index;
+    int index;
 
     index = stp->str_index;
     while (c-- > 0) {
@@ -4716,24 +4627,20 @@ _cast_ofb64_encrypt(s, c, stp)
 
 #ifndef CAST_EXPORT_ENCRYPTION
 int
-cast_ofb64_decrypt(data)
-    int data;
+cast_ofb64_decrypt(int data)
 {
     return _cast_ofb64_decrypt(data, &cast_fb[OFB_128].streams[DIR_DECRYPT-1]);
 }
 #endif
 
 int
-castexp_ofb64_decrypt(data)
-    int data;
+castexp_ofb64_decrypt(int data)
 {
     return _cast_ofb64_decrypt(data, &cast_fb[OFB_40].streams[DIR_DECRYPT-1]);
 }
 
 static int
-_cast_ofb64_decrypt(data, stp)
-    int data;
-    register struct cast_stinfo *stp;
+_cast_ofb64_decrypt(int data, struct cast_stinfo *stp)
 {
     int index;
 
@@ -4976,11 +4883,8 @@ static uint32 S4[] = {
 /* Encrypt/decrypt one 64-bit block of data */
 
 void
-ck_cast_ecb_encrypt(out, in, sched, mode)
-    uint8p out;
-    uint8p in;
-    CastKeySched * sched;
-    int mode;           /* zero means encrypt */
+ck_cast_ecb_encrypt(uint8p out, uint8p in, CastKeySched *sched,
+		    int mode /* zero means encrypt */)
 {
     uint32 t[2];
 
@@ -5010,14 +4914,11 @@ ck_cast_ecb_encrypt(out, in, sched, mode)
 }
 
 void
-ck_cast_ecb_crypt(data, sched, mode)
-    uint32p data;
-    CastKeySched * sched;
-    int mode;
+ck_cast_ecb_crypt(uint32p data, CastKeySched *sched, int mode)
 {
-    register uint32 L, R, temp;
-    register struct CastSubkeyPair * kp;
-    register uint8p Ia, Ib, Ic, Id;
+    uint32 L, R, temp;
+    struct CastSubkeyPair * kp;
+    uint8p Ia, Ib, Ic, Id;
     uint32 I;
 
 #ifdef LITTLE_ENDIAN
@@ -5292,9 +5193,7 @@ static uint32 S8[] = {
 /* Initialize a key schedule from a 128-bit key */
 
 static void
-cast_key_sched(sched, key)
-     CastKeySched * sched;
-     uint8p key;
+cast_key_sched(CastKeySched *sched, uint8p key)
 {
     uint8p x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, xA, xB, xC, xD, xE, xF;
     uint8p z0, z1, z2, z3, z4, z5, z6, z7, z8, z9, zA, zB, zC, zD, zE, zF;
@@ -5433,9 +5332,7 @@ cast_key_sched(sched, key)
 
 #ifndef CAST_EXPORT_ENCRYPTION
 void
-ck_cast128_key_sched(sched, key)
-    CastKeySched * sched;
-    uint8 * key;
+ck_cast128_key_sched(CastKeySched *sched, uint8 *key)
 {
     sched->ksize = 16;
     cast_key_sched(sched, key);
@@ -5445,10 +5342,7 @@ ck_cast128_key_sched(sched, key)
 /* Handle reduced-keysize variants */
 
 static void
-cast5_key_sched(sched, key, sz)
-    CastKeySched * sched;
-    uint8 * key;
-    int sz;
+cast5_key_sched(CastKeySched *sched, uint8 *key, int sz)
 {
     uint8 buf[16];
 
@@ -5461,26 +5355,20 @@ cast5_key_sched(sched, key, sz)
 /* 40, 64, and 80-bit keys - all use 12 rounds */
 
 void
-ck_cast5_40_key_sched(sched, key)
-    CastKeySched * sched;
-    uint8 * key;
+ck_cast5_40_key_sched(CastKeySched *sched, uint8 *key)
 {
     cast5_key_sched(sched, key, 5);
 }
 
 #ifndef CAST_EXPORT_ENCRYPTION
 void
-ck_cast5_64_key_sched(sched, key)
-     CastKeySched * sched;
-     uint8 * key;
+ck_cast5_64_key_sched(CastKeySched *sched, uint8 *key)
 {
     cast5_key_sched(sched, key, 8);
 }
 
 void
-ck_cast5_80_key_sched(sched, key)
-     CastKeySched * sched;
-     uint8 * key;
+ck_cast5_80_key_sched(CastKeySched *sched, uint8 *key)
 {
     cast5_key_sched(sched, key, 10);
 }
@@ -5489,7 +5377,7 @@ ck_cast5_80_key_sched(sched, key)
 
 #ifdef CRYPT_DLL
 static char *
-ck_crypt_dll_version()
+ck_crypt_dll_version(void)
 {
     return(ckcrpv);
 }
