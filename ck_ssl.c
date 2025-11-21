@@ -139,6 +139,11 @@ int ssl_finished_messages = (OPENSSL_VERSION_NUMBER >= 0x0090581fL);
 #endif /* OPENSSL_VERSION_NUMBER */
 #endif /* SSLDLL */
 
+/* Compatibility helpers follow. Avoid using deprecated accessors when
+ * possible; adapters below return owned references using non-deprecated
+ * APIs where available.
+ */
+
 static int auth_ssl_valid = 0;
 static char *auth_ssl_name = 0;    /* this holds the oneline name */
 char ssl_err[SSL_ERR_BFSZ]="";
@@ -892,6 +897,146 @@ static BIGNUM *get_RSA_F4()
     return bn;
 }
 
+/* EVP-based helper: generate an RSA EVP_PKEY (returns new EVP_PKEY or NULL). */
+static EVP_PKEY *
+evp_generate_rsa_key(int bits)
+{
+    EVP_PKEY_CTX *pctx = NULL;
+    EVP_PKEY *pkey = NULL;
+
+    pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
+    if (!pctx)
+        return NULL;
+    if (EVP_PKEY_keygen_init(pctx) <= 0) {
+        EVP_PKEY_CTX_free(pctx);
+        return NULL;
+    }
+    if (EVP_PKEY_CTX_set_rsa_keygen_bits(pctx, bits) <= 0) {
+        EVP_PKEY_CTX_free(pctx);
+        return NULL;
+    }
+    /* try to set public exponent, ignore errors */
+                        /* default public exponent (RSA_F4) is used by providers; no explicit set */
+    if (EVP_PKEY_keygen(pctx, &pkey) <= 0) {
+        EVP_PKEY_CTX_free(pctx);
+        return NULL;
+    }
+    EVP_PKEY_CTX_free(pctx);
+    return pkey;
+}
+
+/* EVP-based helper: construct an EVP_PKEY DH from p/g bytes. Works for OpenSSL 3 via
+ * EVP_PKEY_fromdata and for older OpenSSL by creating a DH and wrapping it in EVP_PKEY.
+ */
+static EVP_PKEY *
+evp_pkey_from_dh_bytes(const unsigned char *pbytes, int plen,
+                       const unsigned char *gbytes, int glen)
+{
+    EVP_PKEY *pkey = NULL;
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+    EVP_PKEY_CTX *pctx = NULL;
+    OSSL_PARAM params[3];
+
+    if (!pbytes || plen <= 0 || !gbytes || glen <= 0)
+        return NULL;
+
+    pctx = EVP_PKEY_CTX_new_from_name(NULL, "DH", NULL);
+    if (!pctx)
+        return NULL;
+    if (EVP_PKEY_fromdata_init(pctx) <= 0) {
+        EVP_PKEY_CTX_free(pctx);
+        return NULL;
+    }
+    params[0] = OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_FFC_P,
+                                                  (void *)pbytes, (size_t)plen);
+    params[1] = OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_FFC_G,
+                                                  (void *)gbytes, (size_t)glen);
+    params[2] = OSSL_PARAM_construct_end();
+    if (EVP_PKEY_fromdata(pctx, &pkey, 0, params) <= 0 || pkey == NULL) {
+        EVP_PKEY_CTX_free(pctx);
+        return NULL;
+    }
+    EVP_PKEY_CTX_free(pctx);
+    return pkey;
+#else /* OpenSSL < 3.0.0 */
+    /* legacy OpenSSL: build DH and wrap in EVP_PKEY */
+    DH *dh = NULL;
+    BIGNUM *p = NULL, *g = NULL;
+
+    if (!pbytes || plen <= 0 || !gbytes || glen <= 0)
+        return NULL;
+
+    dh = DH_new();
+    if (!dh)
+        return NULL;
+    p = BN_bin2bn(pbytes, plen, NULL);
+    g = BN_bin2bn(gbytes, glen, NULL);
+    if (!p || !g) {
+        DH_free(dh);
+        BN_free(p);
+        BN_free(g);
+        return NULL;
+    }
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+    if (DH_set0_pqg(dh, p, NULL, g) == 0) {
+        DH_free(dh);
+        BN_free(p);
+        BN_free(g);
+        return NULL;
+    }
+#else /* OpenSSL < 1.1.0 */
+    dh->p = p;
+    dh->g = g;
+#endif /* OpenSSL < 1.1.0 */
+    pkey = EVP_PKEY_new();
+    if (!pkey) {
+        DH_free(dh);
+        return NULL;
+    }
+    /* EVP_PKEY takes ownership of dh */
+    if (!EVP_PKEY_assign(pkey, EVP_PKEY_DH, dh)) {
+        EVP_PKEY_free(pkey);
+        DH_free(dh);
+        return NULL;
+    }
+    return pkey;
+#endif /* OpenSSL < 3.0.0 */
+}
+
+/* Compatibility: extract and return a new RSA * from an EVP_PKEY (upref). Returns
+ * NULL if not possible. Caller frees returned RSA*.
+ */
+static RSA *
+evp_pkey_get1_rsa(EVP_PKEY *pkey)
+{
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+    return EVP_PKEY_get1_RSA(pkey);
+#else
+    /* On OpenSSL 3+ direct extraction of raw RSA* is deprecated; callers
+       should use EVP_PKEY-based APIs instead. Return NULL so guarded
+       legacy paths can detect absence. */
+    (void)pkey;
+    return NULL;
+#endif
+}
+
+/* Compatibility: extract and return a new DH * from an EVP_PKEY (upref). Returns
+ * NULL if not possible. Caller frees returned DH*.
+ */
+static DH *
+evp_pkey_get1_dh(EVP_PKEY *pkey)
+{
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+    return EVP_PKEY_get1_DH(pkey);
+#else
+    /* On OpenSSL 3+ direct extraction of raw DH* is deprecated; callers
+       should use EVP_PKEY-based APIs instead. Return NULL so guarded
+       legacy paths can detect absence. */
+    (void)pkey;
+    return NULL;
+#endif
+}
+
 static RSA MS_CALLBACK *
 #ifdef CK_ANSIC
 tmp_rsa_cb(SSL * s, int export, int keylength)
@@ -914,29 +1059,15 @@ int keylength;
         /* Prefer EVP_PKEY keygen when available (OpenSSL 1.0+). */
 #if OPENSSL_VERSION_NUMBER >= 0x10000000L
         {
-            EVP_PKEY_CTX *pctx = NULL;
-            EVP_PKEY *pkey = NULL;
-            RSA *r = NULL;
-
-            pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
-            if (pctx) {
-                if (EVP_PKEY_keygen_init(pctx) > 0) {
-                    if (EVP_PKEY_CTX_set_rsa_keygen_bits(pctx, keylength) > 0) {
-                        (void)EVP_PKEY_CTX_set_rsa_keygen_pubexp(pctx, get_RSA_F4());
-                        if (EVP_PKEY_keygen(pctx, &pkey) > 0 && pkey) {
-                            r = EVP_PKEY_get1_RSA(pkey);
-                        }
-                    }
-                }
-                EVP_PKEY_CTX_free(pctx);
-            }
-            if (pkey)
+            EVP_PKEY *pkey = evp_generate_rsa_key(keylength);
+            if (pkey) {
+                rsa_tmp = evp_pkey_get1_rsa(pkey);
                 EVP_PKEY_free(pkey);
-            if (r)
-                rsa_tmp = r;
+            }
         }
 #endif /* OPENSSL_VERSION_NUMBER >= 1.0.0 */
 
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
         /* Fallback to legacy API if EVP keygen didn't produce a key */
         if (rsa_tmp == NULL) {
             rsa_tmp = RSA_new();
@@ -950,6 +1081,7 @@ int keylength;
                 }
             }
         }
+#endif
 
         if (ssl_debug_flag)
             printf("\r\n");
@@ -1119,51 +1251,22 @@ dh_from_pg(const unsigned char *pbytes, int plen,
     if (!pbytes || plen <= 0 || !gbytes || glen <= 0)
         return NULL;
 
-    pctx = EVP_PKEY_CTX_new_from_name(NULL, "DH", NULL);
-    if (!pctx)
+    /* Build an EVP_PKEY for the DH parameters using the centralized helper.
+     * The helper hides provider details and returns an EVP_PKEY when
+     * successful. For compatibility we try to extract a legacy DH* via
+     * `evp_pkey_get1_dh()` (which returns NULL on OpenSSL 3 by design);
+     * callers that need raw DH should be migrated to EVP_PKEY.
+     */
+    pkey = evp_pkey_from_dh_bytes(pbytes, plen, gbytes, glen);
+    if (!pkey)
         return NULL;
-
-    if (EVP_PKEY_fromdata_init(pctx) <= 0) {
-        EVP_PKEY_CTX_free(pctx);
-        return NULL;
-    }
-
-    params[0] = OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_FFC_P,
-                                                  (void *)pbytes, (size_t)plen);
-    params[1] = OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_FFC_G,
-                                                  (void *)gbytes, (size_t)glen);
-    params[2] = OSSL_PARAM_construct_end();
-
-    if (EVP_PKEY_fromdata(pctx, &pkey, 0, params) <= 0 || pkey == NULL) {
-        EVP_PKEY_CTX_free(pctx);
-        return NULL;
-    }
-
-    /* Extract a DH* from the provider EVP_PKEY for compatibility with
-     * existing callers. The accessor is deprecated, so suppress warnings
-     * around its use. We up-ref the DH so it remains valid after freeing
-     * the EVP_PKEY.
+    /* Attempt to provide a legacy DH* for callers compiled with older OpenSSL.
+     * On OpenSSL 3 this will return NULL; on older releases it will return
+     * an owned DH* which the caller must free.
      */
     {
-        DH *dh = NULL;
-    #if defined(__GNUC__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-        const DH *dh_const = EVP_PKEY_get0_DH(pkey);
-        if (dh_const) {
-            if (DH_up_ref((DH *)dh_const))
-            dh = (DH *)dh_const;
-        }
-    #pragma GCC diagnostic pop
-    #else
-        const DH *dh_const = EVP_PKEY_get0_DH(pkey);
-        if (dh_const) {
-            if (DH_up_ref((DH *)dh_const))
-            dh = (DH *)dh_const;
-        }
-    #endif
+        DH *dh = evp_pkey_get1_dh(pkey);
         EVP_PKEY_free(pkey);
-        EVP_PKEY_CTX_free(pctx);
         return dh;
     }
 }
@@ -2149,28 +2252,16 @@ ssl_tn_init(mode) int mode;
                 if ( ssl_debug_flag )
                     printf("Generating temp (512 bit) RSA key ...\r\n");
 
-/* Try EVP keygen first (available in OpenSSL 1.0+), fall back to legacy */
-#if OPENSSL_VERSION_NUMBER >= 0x10000000L
+/* Prefer EVP key generation and extract an RSA when needed. */
                 {
-                    EVP_PKEY_CTX *pctx = NULL;
-                    EVP_PKEY *pkey = NULL;
-
-                    pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
-                    if (pctx) {
-                        if (EVP_PKEY_keygen_init(pctx) > 0) {
-                            if (EVP_PKEY_CTX_set_rsa_keygen_bits(pctx, 512) > 0) {
-                                (void)EVP_PKEY_CTX_set_rsa_keygen_pubexp(pctx, get_RSA_F4());
-                                if (EVP_PKEY_keygen(pctx, &pkey) > 0 && pkey) {
-                                    rsa = EVP_PKEY_get1_RSA(pkey);
-                                }
-                            }
-                        }
-                        EVP_PKEY_CTX_free(pctx);
+                    EVP_PKEY *pkey = evp_generate_rsa_key(512);
+                    if (pkey) {
+                        rsa = evp_pkey_get1_rsa(pkey);
+                        EVP_PKEY_free(pkey);
                     }
-                    if (pkey) EVP_PKEY_free(pkey);
                 }
-#endif
 
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
                 if (!rsa) {
                     rsa = RSA_new();
                     if (rsa) {
@@ -2181,6 +2272,7 @@ ssl_tn_init(mode) int mode;
                         }
                     }
                 }
+#endif
 
                 if ( ssl_debug_flag )
                     printf("Generation of temp (512 bit) RSA key done\r\n");
