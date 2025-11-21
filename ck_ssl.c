@@ -1551,7 +1551,6 @@ ssl_once_init()
 #endif /* NO_OPENSSL_VERSION_CHECK */
 
     debug(F111,"Kermit built for OpenSSL",OPENSSL_VERSION_TEXT,SSLEAY_VERSION_NUMBER);
-#ifndef OS2ONLY
     debug(F111,"OpenSSL Library",SSLeay_version(SSLEAY_VERSION),
            SSLeay());
     debug(F110,"OpenSSL Library",SSLeay_version(SSLEAY_BUILT_ON),0);
@@ -1653,7 +1652,6 @@ the build.\r\n\r\n");
 #endif /* SSLDLL */
         return;
     }
-#endif /* OS2ONLY */
 
     /* init things so we will get meaningful error messages
      * rather than numbers
