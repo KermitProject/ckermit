@@ -1521,6 +1521,27 @@ ssl_once_init()
 
   (per Dr. Stephen Henson)
 */
+#ifdef OPENSSL_300
+/*
+ * Different major version or development version of OpenSSL means
+ * means ABI may break compatibility.  OpenSSL >= 3.0.0
+ */
+#define COMPAT_VERSION_MASK 0xf000000f  /* MNNffppS, major+status */
+#else /* OPENSSL_300 */
+#ifdef OPENSSL_100
+/* Different major/minor version or development version of OpenSSL
+ * means ABI may break compatibility.
+ * Modified by Adam Friedlander for OpenSSL >= 1.0.0
+ * (See <openssl/opensslv.h> for OpenSSL version encoding details.)
+ */
+#define COMPAT_VERSION_MASK 0xfff0000f  /* MNNffppS, major+minor+status */
+#else /* OPENSSL_100 */
+/* Different major/minor/fix/development (not patch) version of OpenSSL
+ * means ABI may break compatibility. */
+#define COMPAT_VERSION_MASK 0xfffff00f  /* MNNFFppS, major+minor+fix+status */
+#endif /* OPENSSL_100 */
+#endif /* OPENSSL_300 */
+
     debug(F111,"Kermit built for OpenSSL",OPENSSL_VERSION_TEXT,SSLEAY_VERSION_NUMBER);
 #ifndef OS2ONLY
     debug(F111,"OpenSSL Library",SSLeay_version(SSLEAY_VERSION),
@@ -1551,14 +1572,21 @@ ssl_once_init()
         printf("?OpenSSL libraries do not match required version:\r\n");
         printf("  . C-Kermit built with %s\r\n",OPENSSL_VERSION_TEXT);
         printf("  . Version found  %s\r\n",SSLeay_version(SSLEAY_VERSION));
+#ifdef OPENSSL_300
+	printf("  OpenSSL versions 3.0.0 or newer must be the same\r\n");
+	printf("  major version number, and Kermit may not be used with\r\n");
+	printf("  a version of OpenSSL older than the one supplied at\r\n");
+	printf("  compilation time.\r\n");
+#else /* OPENSSL_300 */
 #ifdef OPENSSL_100
 	printf("  OpenSSL versions 1.0.0 or newer must be the same\r\n");
 	printf("  major and minor version number, and Kermit may not\r\n");
 	printf("  be used with a version of OpenSSL older than the one\r\n");
 	printf("  supplied at compile time.\r\n");
-#else
+#else /* OPENSSL_100 */
         printf("  OpenSSL versions prior to 1.0.0 must be the same.\r\n");
 #endif /* OPENSSL_100 */
+#endif /* OPENSSL_300 */
 
 	s = "R";
 #ifdef SOLARIS
