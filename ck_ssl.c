@@ -1521,6 +1521,13 @@ ssl_once_init()
 
   (per Dr. Stephen Henson)
 */
+#ifdef NO_OPENSSL_VERSION_CHECK
+/*
+ * Accept any version of OpenSSL regardless of the potential risk
+ * of ABI compatibility.
+ */
+#define COMPAT_VERSION_MASK 0x00000000  /* MNNffppS */
+#else /* NO_OPENSSL_VERSION_CHECK */
 #ifdef OPENSSL_300
 /*
  * Different major version or development version of OpenSSL means
@@ -1541,6 +1548,7 @@ ssl_once_init()
 #define COMPAT_VERSION_MASK 0xfffff00f  /* MNNFFppS, major+minor+fix+status */
 #endif /* OPENSSL_100 */
 #endif /* OPENSSL_300 */
+#endif /* NO_OPENSSL_VERSION_CHECK */
 
     debug(F111,"Kermit built for OpenSSL",OPENSSL_VERSION_TEXT,SSLEAY_VERSION_NUMBER);
 #ifndef OS2ONLY
