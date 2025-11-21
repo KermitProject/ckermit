@@ -55,16 +55,6 @@
 #ifndef OPENSSL_098                     /* sms 15 November 2022 */
 #define OPENSSL_098
 #endif /* OPENSSL_098 */
-/* Different major/minor version or development version of OpenSSL
- * means ABI may break compatibility.
- * Modified by Adam Friedlander for OpenSSL >= 1.0.0
- * (See <openssl/opensslv.h> for OpenSSL version encoding details.)
- */
-#define COMPAT_VERSION_MASK 0xfff0000f  /* MNNffppS, major+minor+status */
-#else
-/* Different major/minor/fix/development (not patch) version of OpenSSL
- * means ABI may break compatibility. */
-#define COMPAT_VERSION_MASK 0xfffff00f  /* MNNFFppS, major+minor+fix+status */
 #endif	/* OPENSSL_100 */
 
 #ifdef OPENSSL_098
