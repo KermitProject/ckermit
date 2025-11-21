@@ -146,6 +146,64 @@ char ssl_err[SSL_ERR_BFSZ]="";
 BIO *bio_err=NULL;
 X509_STORE *crl_store = NULL;
 
+/* Replacement helpers for deprecated OpenSSL APIs (OpenSSL 3.0+)
+ * - X509_NAME_oneline is deprecated; provide helpers that use
+ *   X509_NAME_print_ex and a memory BIO to produce equivalent strings.
+ * - Use these helpers throughout the file instead of the deprecated call.
+ */
+#ifndef XN_FLAG_RFC2253
+#define XN_FLAG_RFC2253 0
+#endif
+
+static char *
+x509_name_oneline_alloc(const X509_NAME *name)
+{
+    BIO *bio = BIO_new(BIO_s_mem());
+    char *ret = NULL;
+    BUF_MEM *bptr = NULL;
+
+    if (!bio)
+        return NULL;
+
+    /* Use RFC2253 style by default when available */
+    if (X509_NAME_print_ex(bio, (X509_NAME *)name, 0, XN_FLAG_RFC2253) < 0) {
+        BIO_free(bio);
+        return NULL;
+    }
+
+    BIO_get_mem_ptr(bio, &bptr);
+    if (bptr && bptr->length > 0) {
+        ret = (char *)malloc((size_t)bptr->length + 1);
+        if (ret) {
+            memcpy(ret, bptr->data, (size_t)bptr->length);
+            ret[bptr->length] = '\0';
+        }
+    }
+    BIO_free(bio);
+    return ret;
+}
+
+static int
+x509_name_oneline_buf(const X509_NAME *name, char *buf, int sz)
+{
+    char *s = x509_name_oneline_alloc(name);
+    int len = 0;
+
+    if (!buf || sz <= 0) {
+        free(s);
+        return 0;
+    }
+    if (!s) {
+        buf[0] = '\0';
+        return 0;
+    }
+    strncpy(buf, s, (size_t) (sz > 0 ? sz - 1 : 0));
+    buf[sz - 1] = '\0';
+    len = (int)strlen(buf);
+    free(s);
+    return len;
+}
+
 #ifndef NOFTP
 #ifndef SYSFTP
 SSL *ssl_ftp_con             = NULL;
@@ -257,10 +315,16 @@ X509_STORE_CTX *ctx;
      * certificate that is being verified ... and if we cannot
      * determine that then something is seriously wrong!
      */
-    makestr(&subject,
-            (char *)X509_NAME_oneline(X509_get_subject_name(xs),NULL,0));
-    makestr(&issuer,
-            (char *)X509_NAME_oneline(X509_get_issuer_name(xs),NULL,0));
+    {
+        char *tmp = x509_name_oneline_alloc(X509_get_subject_name(xs));
+        makestr(&subject, tmp);
+        if (tmp) free(tmp);
+    }
+    {
+        char *tmp = x509_name_oneline_alloc(X509_get_issuer_name(xs));
+        makestr(&issuer, tmp);
+        if (tmp) free(tmp);
+    }
     if (!subject || !subject[0] || !issuer || !issuer[0]) {
         ok = 0;
         goto return_time;
@@ -401,7 +465,7 @@ X509_STORE_CTX *ctx;
         goto return_time;
     }
 #else /* XN_FLAG_SEP_MULTILINE */
-    X509_NAME_oneline(X509_get_subject_name(xs),subject,256);
+    x509_name_oneline_buf(X509_get_subject_name(xs), subject, 256);
     if (!subject[0]) {
         int len;
         ERR_print_errors(bio_err);
@@ -412,7 +476,7 @@ X509_STORE_CTX *ctx;
         goto return_time;
     }
 
-    X509_NAME_oneline(X509_get_issuer_name(xs),issuer,256);
+    x509_name_oneline_buf(X509_get_issuer_name(xs), issuer, 256);
     if (!issuer[0]) {
         int len;
         ERR_print_errors(bio_err);
@@ -838,28 +902,65 @@ int export;
 int keylength;
 #endif /* CK_ANSIC */
 {
-    static RSA *rsa_tmp=NULL;
+    static RSA *rsa_tmp = NULL;
 
 #ifndef NO_RSA
-    if (rsa_tmp == NULL)
-    {
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
+    /* Legacy path: keep existing behavior for older OpenSSL versions. */
+    if (rsa_tmp == NULL) {
         if (ssl_debug_flag)
-            printf("Generating temporary (%d bit) RSA key...\r\n",keylength);
+            printf("Generating temporary (%d bit) RSA key...\r\n", keylength);
 
-        rsa_tmp = RSA_new();
-	if (rsa_tmp) {
-	    int error = RSA_generate_key_ex(rsa_tmp, keylength, get_RSA_F4(),NULL);
-	    if (error) {
-		if (ssl_debug_flag)
-		    printf(" error %d", error);
-		RSA_free(rsa_tmp);
-		rsa_tmp = NULL;
-	    }
-	}
+        /* Prefer EVP_PKEY keygen when available (OpenSSL 1.0+). */
+#if OPENSSL_VERSION_NUMBER >= 0x10000000L
+        {
+            EVP_PKEY_CTX *pctx = NULL;
+            EVP_PKEY *pkey = NULL;
+            RSA *r = NULL;
+
+            pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
+            if (pctx) {
+                if (EVP_PKEY_keygen_init(pctx) > 0) {
+                    if (EVP_PKEY_CTX_set_rsa_keygen_bits(pctx, keylength) > 0) {
+                        (void)EVP_PKEY_CTX_set_rsa_keygen_pubexp(pctx, get_RSA_F4());
+                        if (EVP_PKEY_keygen(pctx, &pkey) > 0 && pkey) {
+                            r = EVP_PKEY_get1_RSA(pkey);
+                        }
+                    }
+                }
+                EVP_PKEY_CTX_free(pctx);
+            }
+            if (pkey)
+                EVP_PKEY_free(pkey);
+            if (r)
+                rsa_tmp = r;
+        }
+#endif /* OPENSSL_VERSION_NUMBER >= 1.0.0 */
+
+        /* Fallback to legacy API if EVP keygen didn't produce a key */
+        if (rsa_tmp == NULL) {
+            rsa_tmp = RSA_new();
+            if (rsa_tmp) {
+                int error = RSA_generate_key_ex(rsa_tmp, keylength, get_RSA_F4(), NULL);
+                if (error == 0) {
+                    if (ssl_debug_flag)
+                        printf(" error %d", error);
+                    RSA_free(rsa_tmp);
+                    rsa_tmp = NULL;
+                }
+            }
+        }
 
         if (ssl_debug_flag)
             printf("\r\n");
     }
+#else
+    /* On OpenSSL 3.x, the tmp RSA callback and raw RSA APIs are deprecated.
+     * Return NULL to let OpenSSL select appropriate ephemeral keys via providers.
+     */
+    (void)s; (void)export; (void)keylength;
+    return NULL;
+#endif /* OPENSSL_VERSION_NUMBER */
 #else /* NO_RSA */
     if (ssl_debug_flag)
         printf("Unable to generate temporary RSA key...\r\n");
@@ -962,28 +1063,41 @@ static unsigned char dh2048_g[]={
     0x02,
 };
 
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 static DH *
-get_dh512()
+dh_from_pg(const unsigned char *pbytes, int plen,
+           const unsigned char *gbytes, int glen)
 {
-    DH *dh=NULL;
-    BIGNUM *p = NULL;
-    BIGNUM *g = NULL;
+    DH *dh = NULL;
+    BIGNUM *p = NULL, *g = NULL;
 
-    if ((dh=DH_new()) == NULL)
-        return(NULL);
+    if (!pbytes || plen <= 0 || !gbytes || glen <= 0)
+        return NULL;
+
+    dh = DH_new();
+    if (!dh)
+        return NULL;
+
 #if OPENSSL_VERSION_NUMBER >= 0x10100005L
-    p=BN_bin2bn(dh512_p,sizeof(dh512_p),NULL);
-    g=BN_bin2bn(dh512_g,sizeof(dh512_g),NULL);
-    if ((p == NULL) || (g == NULL)) {
-	BN_free(g);
-	BN_free(p);
-	DH_free(dh);
-        return(NULL);
+    p = BN_bin2bn(pbytes, plen, NULL);
+    g = BN_bin2bn(gbytes, glen, NULL);
+    if (!p || !g) {
+        DH_free(dh);
+        BN_free(p);
+        BN_free(g);
+        return NULL;
     }
-    DH_set0_pqg(dh, p, NULL, g);
-#else
-    dh->p=BN_bin2bn(dh512_p,sizeof(dh512_p),NULL);
-    dh->g=BN_bin2bn(dh512_g,sizeof(dh512_g),NULL);
+
+    if (DH_set0_pqg(dh, p, NULL, g) == 0) {
+        DH_free(dh);
+        BN_free(p);
+        BN_free(g);
+        return NULL;
+    }
+    /* DH_set0_pqg takes ownership of p and g on success */
+#else /* OpenSSL < 1.1.0 */
+    dh->p = BN_bin2bn(pbytes, plen, NULL);
+    dh->g = BN_bin2bn(pbytes, plen, NULL);
     if ((dh->p == NULL) || (dh->g == NULL)) {
         BN_free(dh->g);
         BN_free(dh->p);
@@ -991,135 +1105,98 @@ get_dh512()
         return(NULL);
    }
 #endif
-    return(dh);
+    return dh;
+}
+#else /* OpenSSL > 3.0.0 */
+static DH *
+dh_from_pg(const unsigned char *pbytes, int plen,
+           const unsigned char *gbytes, int glen)
+{
+    EVP_PKEY *pkey = NULL;
+    EVP_PKEY_CTX *pctx = NULL;
+    OSSL_PARAM params[3];
+
+    if (!pbytes || plen <= 0 || !gbytes || glen <= 0)
+        return NULL;
+
+    pctx = EVP_PKEY_CTX_new_from_name(NULL, "DH", NULL);
+    if (!pctx)
+        return NULL;
+
+    if (EVP_PKEY_fromdata_init(pctx) <= 0) {
+        EVP_PKEY_CTX_free(pctx);
+        return NULL;
+    }
+
+    params[0] = OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_FFC_P,
+                                                  (void *)pbytes, (size_t)plen);
+    params[1] = OSSL_PARAM_construct_octet_string(OSSL_PKEY_PARAM_FFC_G,
+                                                  (void *)gbytes, (size_t)glen);
+    params[2] = OSSL_PARAM_construct_end();
+
+    if (EVP_PKEY_fromdata(pctx, &pkey, 0, params) <= 0 || pkey == NULL) {
+        EVP_PKEY_CTX_free(pctx);
+        return NULL;
+    }
+
+    /* Extract a DH* from the provider EVP_PKEY for compatibility with
+     * existing callers. The accessor is deprecated, so suppress warnings
+     * around its use. We up-ref the DH so it remains valid after freeing
+     * the EVP_PKEY.
+     */
+    {
+        DH *dh = NULL;
+    #if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+        const DH *dh_const = EVP_PKEY_get0_DH(pkey);
+        if (dh_const) {
+            if (DH_up_ref((DH *)dh_const))
+            dh = (DH *)dh_const;
+        }
+    #pragma GCC diagnostic pop
+    #else
+        const DH *dh_const = EVP_PKEY_get0_DH(pkey);
+        if (dh_const) {
+            if (DH_up_ref((DH *)dh_const))
+            dh = (DH *)dh_const;
+        }
+    #endif
+        EVP_PKEY_free(pkey);
+        EVP_PKEY_CTX_free(pctx);
+        return dh;
+    }
+}
+#endif /* OPENSSL_VERSION_NUMBER */
+
+static DH *
+get_dh512()
+{
+    return dh_from_pg(dh512_p, sizeof(dh512_p), dh512_g, sizeof(dh512_g));
 }
 
 static DH *
 get_dh768()
 {
-    DH *dh=NULL;
-    BIGNUM *p = NULL;
-    BIGNUM *g = NULL;
-
-    if ((dh=DH_new()) == NULL)
-        return(NULL);
-#if OPENSSL_VERSION_NUMBER >= 0x10100005L
-    p=BN_bin2bn(dh768_p,sizeof(dh768_p),NULL);
-    g=BN_bin2bn(dh768_g,sizeof(dh768_g),NULL);
-    if ((p == NULL) || (g == NULL)) {
-	BN_free(g);
-	BN_free(p);
-	DH_free(dh);
-        return(NULL);
-    }
-    DH_set0_pqg(dh, p, NULL, g);
-#else
-    dh->p=BN_bin2bn(dh768_p,sizeof(dh768_p),NULL);
-    dh->g=BN_bin2bn(dh768_g,sizeof(dh768_g),NULL);
-    if ((dh->p == NULL) || (dh->g == NULL)) {
-        BN_free(dh->g);
-        BN_free(dh->p);
-        DH_free(dh);
-        return(NULL);
-   }
-#endif
-    return(dh);
+    return dh_from_pg(dh768_p, sizeof(dh768_p), dh768_g, sizeof(dh768_g));
 }
 
 static DH *
 get_dh1024()
 {
-    DH *dh=NULL;
-    BIGNUM *p = NULL;
-    BIGNUM *g = NULL;
-
-    if ((dh=DH_new()) == NULL)
-        return(NULL);
-#if OPENSSL_VERSION_NUMBER >= 0x10100005L
-    p=BN_bin2bn(dh1024_p,sizeof(dh1024_p),NULL);
-    g=BN_bin2bn(dh1024_g,sizeof(dh1024_g),NULL);
-    if ((p == NULL) || (g == NULL)) {
-	BN_free(g);
-	BN_free(p);
-	DH_free(dh);
-        return(NULL);
-    }
-    DH_set0_pqg(dh, p, NULL, g);
-#else
-    dh->p=BN_bin2bn(dh1024_p,sizeof(dh1024_p),NULL);
-    dh->g=BN_bin2bn(dh1024_g,sizeof(dh1024_g),NULL);
-    if ((dh->p == NULL) || (dh->g == NULL)) {
-        BN_free(dh->g);
-        BN_free(dh->p);
-        DH_free(dh);
-        return(NULL);
-   }
-#endif
-    return(dh);
+    return dh_from_pg(dh1024_p, sizeof(dh1024_p), dh1024_g, sizeof(dh1024_g));
 }
 
 static DH *
 get_dh1536()
 {
-    DH *dh=NULL;
-    BIGNUM *p = NULL;
-    BIGNUM *g = NULL;
-
-    if ((dh=DH_new()) == NULL)
-        return(NULL);
-#if OPENSSL_VERSION_NUMBER >= 0x10100005L
-    p=BN_bin2bn(dh1536_p,sizeof(dh1536_p),NULL);
-    g=BN_bin2bn(dh1536_g,sizeof(dh1536_g),NULL);
-    if ((p == NULL) || (g == NULL)) {
-	BN_free(g);
-	BN_free(p);
-	DH_free(dh);
-        return(NULL);
-    }
-    DH_set0_pqg(dh, p, NULL, g);
-#else
-    dh->p=BN_bin2bn(dh1536_p,sizeof(dh1536_p),NULL);
-    dh->g=BN_bin2bn(dh1536_g,sizeof(dh1536_g),NULL);
-    if ((dh->p == NULL) || (dh->g == NULL)) {
-        BN_free(dh->g);
-        BN_free(dh->p);
-        DH_free(dh);
-        return(NULL);
-   }
-#endif
-    return(dh);
+    return dh_from_pg(dh1536_p, sizeof(dh1536_p), dh1536_g, sizeof(dh1536_g));
 }
 
 static DH *
 get_dh2048()
 {
-    DH *dh=NULL;
-    BIGNUM *p = NULL;
-    BIGNUM *g = NULL;
-
-    if ((dh=DH_new()) == NULL)
-        return(NULL);
-#if OPENSSL_VERSION_NUMBER >= 0x10100005L
-    p=BN_bin2bn(dh2048_p,sizeof(dh2048_p),NULL);
-    g=BN_bin2bn(dh2048_g,sizeof(dh2048_g),NULL);
-    if ((p == NULL) || (g == NULL)) {
-	BN_free(g);
-	BN_free(p);
-	DH_free(dh);
-        return(NULL);
-    }
-    DH_set0_pqg(dh, p, NULL, g);
-#else
-    dh->p=BN_bin2bn(dh2048_p,sizeof(dh2048_p),NULL);
-    dh->g=BN_bin2bn(dh2048_g,sizeof(dh2048_g),NULL);
-    if ((dh->p == NULL) || (dh->g == NULL)) {
-        BN_free(dh->g);
-        BN_free(dh->p);
-        DH_free(dh);
-        return(NULL);
-   }
-#endif
-    return(dh);
+    return dh_from_pg(dh2048_p, sizeof(dh2048_p), dh2048_g, sizeof(dh2048_g));
 }
 #endif /* NO_DH */
 
@@ -1135,7 +1212,7 @@ int keylength;
 {
     static DH *dh_tmp=NULL;
     BIO *bio=NULL;
-
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
 #ifndef NO_DH
     if (dh_tmp == NULL)
     {
@@ -1162,6 +1239,11 @@ int keylength;
     if (ssl_debug_flag)
         printf("DH not supported...\r\n");
 #endif /* NO_DH */
+#else /* OpenSSL 3+ */
+    /* OpenSSL 3+: do not use legacy DH PEM or DH APIs; providers supply parameters */
+    (void)s; (void)export; (void)keylength; (void)bio;
+    return NULL;
+#endif /* OPENSSL_VERSION_NUMBER */
     return(dh_tmp);
 }
 
@@ -1237,9 +1319,9 @@ int verbose;
     if ( server || tn_deb ) {
         peer=SSL_get_peer_certificate(ssl_con);
         if (peer != NULL) {
-            X509_NAME_oneline(X509_get_subject_name(peer),buf,512);
+            x509_name_oneline_buf(X509_get_subject_name(peer), buf, 512);
             printf("[TLS - subject=%s]\r\n",buf);
-            X509_NAME_oneline(X509_get_issuer_name(peer),buf,512);
+            x509_name_oneline_buf(X509_get_issuer_name(peer), buf, 512);
             printf("[TLS - issuer=%s]\r\n",buf);
             /* X509_free(peer); */
         } else if (!tls_is_krb5(0)) {
@@ -1552,16 +1634,16 @@ ssl_once_init()
 
     debug(F111,"Kermit built for OpenSSL",OPENSSL_VERSION_TEXT,SSLEAY_VERSION_NUMBER);
     debug(F111,"OpenSSL Library",SSLeay_version(SSLEAY_VERSION),
-           SSLeay());
+          SSLeay());
     debug(F110,"OpenSSL Library",SSLeay_version(SSLEAY_BUILT_ON),0);
     debug(F110,"OpenSSL Library",SSLeay_version(SSLEAY_CFLAGS),0);
     debug(F110,"OpenSSL Library",SSLeay_version(SSLEAY_PLATFORM),0);
 
     /* The following test is suggested by Richard Levitte */
-    /* if (((OPENSSL_VERSION_NUMBER ^ SSLeay()) & 0xffffff0f) */
+    /* if (((OPENSSL_VERSION_NUMBER ^ OpenSSL_version_num()) & 0xffffff0f) */
     /* Modified by Adam Friedlander for OpenSSL >= 1.0.0 */
-    if (OPENSSL_VERSION_NUMBER > SSLeay()
-         || ((OPENSSL_VERSION_NUMBER ^ SSLeay()) & COMPAT_VERSION_MASK)
+    if (SSLEAY_VERSION_NUMBER > SSLeay()
+        || ((SSLEAY_VERSION_NUMBER ^ SSLeay()) & COMPAT_VERSION_MASK)
 #ifdef OS2
 /* DG 2024-08-05: Not sure what the point of this was. Presumably the goal was
  *    to prevent updated OpenSSL libraries from being used, though why you'd
@@ -1581,13 +1663,13 @@ ssl_once_init()
  *    The check below ensured that only the custom built OpenSSL DLL against
  *    which Kermit 95 was built could be loaded.
  *
-         || ckstrcmp(OPENSSL_VERSION_TEXT,(char *)SSLeay_version(SSLEAY_VERSION),-1,1)
+        || ckstrcmp(OPENSSL_VERSION_TEXT,(char *)SSLeay_version(SSLEAY_VERSION),-1,1)
  */
 #endif /* OS2 */
          ) {
         ssl_installed = 0;
-        debug(F111,"OpenSSL Version does not match.  Built with",
-               SSLeay_version(SSLEAY_VERSION),SSLEAY_VERSION_NUMBER);
+         debug(F111,"OpenSSL Version does not match.  Built with",
+             SSLeay_version(SSLEAY_VERSION),SSLEAY_VERSION_NUMBER);
         printf("?OpenSSL libraries do not match required version:\r\n");
         printf("  . C-Kermit built with %s\r\n",OPENSSL_VERSION_TEXT);
         printf("  . Version found  %s\r\n",SSLeay_version(SSLEAY_VERSION));
@@ -1656,17 +1738,26 @@ the build.\r\n\r\n");
     /* init things so we will get meaningful error messages
      * rather than numbers
      */
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+    /* OpenSSL 3.0+: use the new init functions */
+    OPENSSL_init_ssl(OPENSSL_INIT_LOAD_SSL_STRINGS
+#ifdef OPENSSL_INIT_ADD_ALL_CIPHERS
+                     | OPENSSL_INIT_ADD_ALL_CIPHERS
+#endif
+#ifdef OPENSSL_INIT_ADD_ALL_DIGESTS
+                     | OPENSSL_INIT_ADD_ALL_DIGESTS
+#endif
+                     , NULL);
+#else
     SSL_load_error_strings();
 
 #ifdef SSHBUILTIN
     OPENSSL_add_all_algorithms_noconf();
 #else
-    /* SSL_library_init() only loads those ciphers needs for SSL  */
-    /* These happen to be a similar set to those required for SSH */
-    /* but they are not a complete set of ciphers provided by the */
-    /* crypto library.                                            */
+    /* SSL_library_init() only loads those ciphers needed for SSL */
     SSL_library_init();
 #endif /* SSHBUILTIN */
+#endif /* OPENSSL_VERSION_NUMBER >= 3.0.0 */
 
 #ifndef OPENSSL_NO_COMP
 #ifdef ZLIB
@@ -2026,6 +2117,7 @@ ssl_tn_init(mode) int mode;
              * one now!
              */
 
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
             SSL_CTX_set_tmp_rsa_callback(ssl_ctx, tmp_rsa_cb);
             SSL_CTX_set_tmp_dh_callback( ssl_ctx, tmp_dh_cb);
             SSL_CTX_set_tmp_rsa_callback(tls_ctx, tmp_rsa_cb);
@@ -2034,6 +2126,12 @@ ssl_tn_init(mode) int mode;
             dh = tmp_dh_cb(NULL,0,512);
             SSL_CTX_set_tmp_dh(ssl_ctx,dh);
             SSL_CTX_set_tmp_dh(tls_ctx,dh);
+#else
+            /* OpenSSL 3+: temporary RSA/DH callbacks and raw DH/RSA APIs are
+             * deprecated. Providers will provide appropriate ephemeral keys
+             * so we skip installing legacy callbacks.
+             */
+#endif
 
             /* The following code is only called if we are using a
              * certificate with an RSA public key and where the
@@ -2042,42 +2140,74 @@ ssl_tn_init(mode) int mode;
              * the greatest legal privacy level with exportable clients.
              */
 
+#if OPENSSL_VERSION_NUMBER < 0x30000000L
             if (SSL_CTX_need_tmp_RSA(ssl_ctx) ||
                  SSL_CTX_need_tmp_RSA(tls_ctx))
             {
-                RSA *rsa;
+                RSA *rsa = NULL;
 
                 if ( ssl_debug_flag )
                     printf("Generating temp (512 bit) RSA key ...\r\n");
-		rsa = RSA_new();
-		if (rsa) {
-		    int error = RSA_generate_key_ex(rsa,512,get_RSA_F4(),NULL);
-		    if (error) {
-		    	RSA_free(rsa);
-			rsa = NULL;
-		    }
-		}
+
+/* Try EVP keygen first (available in OpenSSL 1.0+), fall back to legacy */
+#if OPENSSL_VERSION_NUMBER >= 0x10000000L
+                {
+                    EVP_PKEY_CTX *pctx = NULL;
+                    EVP_PKEY *pkey = NULL;
+
+                    pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_RSA, NULL);
+                    if (pctx) {
+                        if (EVP_PKEY_keygen_init(pctx) > 0) {
+                            if (EVP_PKEY_CTX_set_rsa_keygen_bits(pctx, 512) > 0) {
+                                (void)EVP_PKEY_CTX_set_rsa_keygen_pubexp(pctx, get_RSA_F4());
+                                if (EVP_PKEY_keygen(pctx, &pkey) > 0 && pkey) {
+                                    rsa = EVP_PKEY_get1_RSA(pkey);
+                                }
+                            }
+                        }
+                        EVP_PKEY_CTX_free(pctx);
+                    }
+                    if (pkey) EVP_PKEY_free(pkey);
+                }
+#endif
+
+                if (!rsa) {
+                    rsa = RSA_new();
+                    if (rsa) {
+                        int error = RSA_generate_key_ex(rsa,512,get_RSA_F4(),NULL);
+                        if (error == 0) {
+                            RSA_free(rsa);
+                            rsa = NULL;
+                        }
+                    }
+                }
+
                 if ( ssl_debug_flag )
                     printf("Generation of temp (512 bit) RSA key done\r\n");
 
-                if (SSL_CTX_need_tmp_RSA(ssl_ctx)) {
-                    if (!SSL_CTX_set_tmp_rsa(ssl_ctx,rsa)) {
-                        if ( ssl_debug_flag )
-                            printf(
+                if (rsa) {
+                    if (SSL_CTX_need_tmp_RSA(ssl_ctx)) {
+                        if (!SSL_CTX_set_tmp_rsa(ssl_ctx,rsa)) {
+                            if ( ssl_debug_flag )
+                                printf(
   "Failed to assign generated temp RSA key to SSL!\r\n");
+                        }
                     }
-                }
-                if (SSL_CTX_need_tmp_RSA(tls_ctx)) {
-                    if (!SSL_CTX_set_tmp_rsa(tls_ctx,rsa)) {
-                        if ( ssl_debug_flag )
-                            printf(
+                    if (SSL_CTX_need_tmp_RSA(tls_ctx)) {
+                        if (!SSL_CTX_set_tmp_rsa(tls_ctx,rsa)) {
+                            if ( ssl_debug_flag )
+                                printf(
   "Failed to assign generated temp RSA key to TLS!\r\n");
+                        }
                     }
+                    RSA_free(rsa);
+                    if ( ssl_debug_flag )
+                        printf("Assigned temp (512 bit) RSA key\r\n");
                 }
-                RSA_free(rsa);
-                if ( ssl_debug_flag )
-                    printf("Assigned temp (512 bit) RSA key\r\n");
             }
+#else
+            /* OpenSSL 3+: providers supply ephemeral keys; no legacy temp RSA needed */
+#endif
         }
     }
 
@@ -2838,7 +2968,7 @@ ssl_get_issuer_name(ssl) SSL * ssl;
 
     name[0] = '\0';
     if ((server_cert = SSL_get_peer_certificate(ssl))) {
-        X509_NAME_oneline(X509_get_issuer_name(server_cert),name,sizeof(name));
+        x509_name_oneline_buf(X509_get_issuer_name(server_cert), name, sizeof(name));
         X509_free(server_cert);
         return name;
     }
@@ -2861,8 +2991,8 @@ ssl_get_subject_name(ssl) SSL * ssl;
     X509 *server_cert;
 
     name[0] = '\0';
-    if ((server_cert = SSL_get_peer_certificate(ssl))) {
-       X509_NAME_oneline(X509_get_subject_name(server_cert),name,sizeof(name));
+     if ((server_cert = SSL_get_peer_certificate(ssl))) {
+         x509_name_oneline_buf(X509_get_subject_name(server_cert), name, sizeof(name));
        X509_free(server_cert);
        return name;
     }
@@ -3082,8 +3212,8 @@ ssl_verify_crl(int ok, X509_STORE_CTX *ctx)
 
                 serial = ASN1_INTEGER_get(revoked->serialNumber);
 #endif
-                cp = X509_NAME_oneline(issuer, NULL, 0);
-                free(cp);
+                cp = x509_name_oneline_alloc(issuer);
+                if (cp) free(cp);
 
                 X509_STORE_CTX_set_error(ctx, X509_V_ERR_CERT_REVOKED);
 #if OPENSSL_VERSION_NUMBER >= 0x10100005L
@@ -4642,8 +4772,11 @@ X509_to_user(X509 *peer_cert, char *userid, int len)
         return -1;
 
     userid[0] = '\0';
-    debug(F110,"X509_to_user() subject",
-           X509_NAME_oneline(X509_get_subject_name(peer_cert),NULL,0),0);
+    {
+        char *__tmp = x509_name_oneline_alloc(X509_get_subject_name(peer_cert));
+        debug(F110,"X509_to_user() subject", __tmp ? __tmp : "(null)",0);
+        if (__tmp) free(__tmp);
+    }
 
     /* userid is in cert subject /UID */
     err = X509_NAME_get_text_by_NID(X509_get_subject_name(peer_cert),
@@ -4673,8 +4806,11 @@ X509_to_user(X509 *peer_cert, char *userid, int len)
 
     userid[0] = '\0';
     email[0] = '\0';
-    debug(F110,"X509_to_user() subject",
-           X509_NAME_oneline(X509_get_subject_name(peer_cert),NULL,0),0);
+    {
+        char *__tmp = x509_name_oneline_alloc(X509_get_subject_name(peer_cert));
+        debug(F110,"X509_to_user() subject", __tmp ? __tmp : "(null)",0);
+        if (__tmp) free(__tmp);
+    }
 
     if ((i = X509_get_ext_by_NID(peer_cert, NID_subject_alt_name, -1))<0)
         return -1;
