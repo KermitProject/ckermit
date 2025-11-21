@@ -1570,8 +1570,20 @@ ssl_once_init()
  *    SSH code was built way back in the early 2000s I guess. Today Kermit 95s
  *    use of OpenSSL is largely the same as how C-Kermit uses it on other
  *    platforms so I don't see any reason to treat it differently here.
+ *
+ * JA 2025-11-20: Kermit 95 was a commercial product that shipped with its own
+ *    version of OpenSSL which included the exact set of crypto algorithms for
+ *    which Columbia University was granted an export license and excluded all
+ *    algorithms for which there might be patent claims.
+ *
+ *    In addition, on both Windows and OS/2 there was no equivalent of
+ *    Assemblies https://learn.microsoft.com/en-us/windows/win32/msi/assemblies
+ *    to ensure that only the desired DLL could be loaded by LoadLibrary().
+ *    The check below ensured that only the custom built OpenSSL DLL against
+ *    which Kermit 95 was built could be loaded.
+ *
          || ckstrcmp(OPENSSL_VERSION_TEXT,(char *)SSLeay_version(SSLEAY_VERSION),-1,1)
-*/
+ */
 #endif /* OS2 */
          ) {
         ssl_installed = 0;
