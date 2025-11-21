@@ -82,6 +82,11 @@
 #include <openssl/sha.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#include <openssl/core.h>
+#include <openssl/params.h>
+#include <openssl/core_names.h>
+#endif
 #ifdef SSL_KRB5
 #include <openssl/kssl.h>
 #endif /* SSL_KRB5 */
