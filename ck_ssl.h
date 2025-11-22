@@ -39,8 +39,8 @@
 #include <openssl/comp.h>
 #endif /* OPENSSL_NO_COMP */
 #endif /* ZLIB */
-/* We place the following to avoid loading openssl/mdc2.h since it 
- * relies on the OpenSSL des.h.  Since we do not need the MDC2 
+/* We place the following to avoid loading openssl/mdc2.h since it
+ * relies on the OpenSSL des.h.  Since we do not need the MDC2
  * definitions there is no reason to have it included by openssl/evp.h
  */
 #define OPENSSL_NO_MDC2
@@ -55,16 +55,6 @@
 #ifndef OPENSSL_098                     /* sms 15 November 2022 */
 #define OPENSSL_098
 #endif /* OPENSSL_098 */
-/* Different major/minor version or development version of OpenSSL
- * means ABI may break compatibility.
- * Modified by Adam Friedlander for OpenSSL >= 1.0.0
- * (See <openssl/opensslv.h> for OpenSSL version encoding details.)
- */
-#define COMPAT_VERSION_MASK 0xfff0000f  /* MNNffppS, major+minor+status */
-#else
-/* Different major/minor/fix/development (not patch) version of OpenSSL
- * means ABI may break compatibility. */
-#define COMPAT_VERSION_MASK 0xfffff00f  /* MNNFFppS, major+minor+fix+status */
 #endif	/* OPENSSL_100 */
 
 #ifdef OPENSSL_098
@@ -92,6 +82,11 @@
 #include <openssl/sha.h>
 #include <openssl/evp.h>
 #include <openssl/hmac.h>
+#if OPENSSL_VERSION_NUMBER >= 0x30000000L
+#include <openssl/core.h>
+#include <openssl/params.h>
+#include <openssl/core_names.h>
+#endif
 #ifdef SSL_KRB5
 #include <openssl/kssl.h>
 #endif /* SSL_KRB5 */

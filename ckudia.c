@@ -4456,13 +4456,8 @@ char fbuf[FULLNUML];
 
 static ckjmpbuf sjbuf;
 
-#ifdef CK_ANSIC
-static SIGTYP (*savalrm)(int);	/* For saving alarm handler */
-static SIGTYP (*savint)(int);	/* For saving interrupt handler */
-#else
-static SIGTYP (*savalrm)();	/* For saving alarm handler */
-static SIGTYP (*savint)();	/* For saving interrupt handler */
-#endif /* CK_ANSIC */
+static sig_t savalrm;	/* For saving alarm handler */
+static sig_t savint;	/* For saving interrupt handler */
 
 #ifdef CKLOGDIAL
 static VOID
@@ -5936,7 +5931,7 @@ _dodial(threadinfo) VOID * threadinfo;
 		    if (x > LBUFL) x = LBUFL;
 		    x = ttxin(x,(CHAR *)lbuf);
 		    if ((x > 0) && dialdpy) conol(lbuf);
-		} else if (network 
+		} else if (network
 #ifdef TN_COMPORT
                            && !istncomport()
 #endif /* TN_COMPORT */
@@ -8109,7 +8104,7 @@ dialhup() {
 #ifdef TN_COMPORT
                    && !istncomport()    /* (without RFC 2217)    */
 #endif /* TN_COMPORT */
-                   ) {		
+                   ) {
 	    dialsta = DIA_HANG;
 	    if (dialdpy)		/* a modem server, just print a msg */
 	      printf(" WARNING - modem hangup failed\r\n"); /* don't hangup! */

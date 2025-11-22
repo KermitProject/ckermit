@@ -3008,7 +3008,7 @@ auth_send(parsedat,end_sub) unsigned char *parsedat; int end_sub;
 
         /* Construct and send Authentication Name subnegotiation */
         if ( plen < sizeof(buf) - 6 ) {
-            sprintf((char *)buf, "%c%c%c%c", IAC, SB, 
+            sprintf((char *)buf, "%c%c%c%c", IAC, SB,
                      TELOPT_AUTHENTICATION,
                      TELQUAL_NAME);
             memcpy(&buf[4], pname, plen);               /* safe */
@@ -3021,7 +3021,7 @@ auth_send(parsedat,end_sub) unsigned char *parsedat; int end_sub;
             ReleaseTelnetMutex();
 #endif
         } else {
-            sprintf((char *)buf, "%c%c%c%c%c%c", IAC, SB, 
+            sprintf((char *)buf, "%c%c%c%c%c%c", IAC, SB,
                      TELOPT_AUTHENTICATION,
                      TELQUAL_NAME, IAC, SE);    /* safe */
 #ifdef OS2
@@ -3775,7 +3775,7 @@ ck_krb4_autoget_TGT(char * realm)
 
     if ( krb4_init.principal == NULL ||
          krb4_init.principal[0] == '\0') {
-        int ok = uq_txt(NULL, 
+        int ok = uq_txt(NULL,
                  k4prprompt && k4prprompt[0] ?
                  k4prprompt :
                  "Kerberos 4 Principal: ",
@@ -7453,7 +7453,7 @@ ck_krb5_prompter( krb5_context context,
             tb[i].t_lbl = prompts[i].prompt;
             tb[i].t_dflt = NULL;
             tb[i].t_echo = (prompts[i].hidden ? 2 : 1);
-        }   
+        }
 
         ok = uq_mtxt((char *)banner,NULL,num_prompts,tb);
         if ( ok ) {
@@ -8203,7 +8203,7 @@ ck_krb5_initTGT(op,init,k4_init)
                 }
             }
 
-            if ( !password ) 
+            if ( !password )
                 password = "";
             code = krb5_get_in_tkt_with_password(kcontext, options,
 #ifdef HEIMDAL
@@ -8232,7 +8232,7 @@ ck_krb5_initTGT(op,init,k4_init)
                 goto exit_k5_init;
             }
         }
-        if ( !password ) 
+        if ( !password )
             password = "";
         code = krb5_get_in_tkt_with_password(kcontext, options,
 #ifdef HEIMDAL
@@ -8331,9 +8331,9 @@ ck_krb5_initTGT(op,init,k4_init)
         goto exit_k5_init;
     }
 
-    if ( init->getk4 && 
+    if ( init->getk4 &&
 #ifdef KRB524_CONV
-         !try_convert524(kcontext,me,ccache) && 
+         !try_convert524(kcontext,me,ccache) &&
 #endif /* KRB524_CONV */
          k4_init ) {
         int k4rc = ck_krb4_initTGT(op,k4_init);
@@ -11335,7 +11335,7 @@ rcmd_stream_init_krb5(in_keyblock, encrypt_flag, lencheck, am_client,
         return;
     }
 
-    encivec_i[0].length = encivec_i[1].length = 
+    encivec_i[0].length = encivec_i[1].length =
     encivec_o[0].length = encivec_o[1].length = blocksize;
 
     if ((encivec_i[0].data = malloc(encivec_i[0].length * 4)) == NULL) {
@@ -11503,7 +11503,7 @@ ck_krb_rlogin(hostname, port,
         get_cred = NULL;
         (void) krb5_cc_close(k5_context, ccache);
 
-        if (status) 
+        if (status)
             goto bad;
 
         /* Reset internal flags; these should not be set. */
@@ -11660,7 +11660,7 @@ ck_krb_rlogin(hostname, port,
             status = krb5_write_message(k5_context,
                                          (krb5_pointer)&ttyfd,
                                          &outbuf);
-        }       
+        }
 
         if ((c = ttinc(0)) < 0) {
             if (c==-1) {
@@ -11936,7 +11936,7 @@ krb5_des_read(fd, buf, len, secondary)
             return cc; /* read error */
         }
         if (cc == 1) {
-            if (c == 0 || !do_lencheck) 
+            if (c == 0 || !do_lencheck)
                 break;
         }
     }
@@ -11949,7 +11949,7 @@ krb5_des_read(fd, buf, len, secondary)
     if ((cc = net_read(fd, &c, 1)) != 1) return 0;
     rd_len = (rd_len << 8) | c;
 
-    if (status = krb5_c_encrypt_length(k5_context, 
+    if (status = krb5_c_encrypt_length(k5_context,
 #ifdef HEIMDAL
                                     k5_session_key->keytype,
 #else
@@ -12000,7 +12000,7 @@ krb5_des_read(fd, buf, len, secondary)
         errno = EIO;
         return(-1);
     }
-    
+
     store_ptr = storage;
     nstored = rd_len;
 

@@ -435,7 +435,7 @@ encstr(s) CHAR* s;
   maximum packet size.  Previously we were limited to the length of encbuf[].
   Also, to return a failure code if the entire encoded string would not fit.
   Modified 14 Jul 1998 to return length of encoded string.
-  Modified 18 Oct 2021 to not truncate filename in F packet.  
+  Modified 18 Oct 2021 to not truncate filename in F packet.
 */
     int m, rc, slen; char *p;
     /* data is a pointer to send-packet data declared in ckcmai.c */
@@ -515,7 +515,7 @@ puttrm(c) register char c;
 #endif /* NOSPL */
 /*
   This routine is used (among other things) for printing the server's answer
-  to a REMOTE command.  But REMOTE CD is special because it isn't really 
+  to a REMOTE command.  But REMOTE CD is special because it isn't really
   asking for an answer from the server.  Thus some people want to suppress
   the confirmation message (e.g. when the server sends back the actual path
   of the directory CD'd to), and expect to be able to do this with SET QUIET
@@ -974,7 +974,7 @@ xpnbyte(a,tcs,fcs,fn) int a, tcs, fcs; int (*fn)();
                                        &colorcmd
                                        );
 #endif /* COMMENT */
-                } else 
+                } else
 #endif /* OS2 */
 #endif /* IKSDONLY */
                 {
@@ -1000,7 +1000,7 @@ xpnbyte(a,tcs,fcs,fn) int a, tcs, fcs; int (*fn)();
                                        wherex[VCMD],
                                        &colorcmd
                                        );
-                } else 
+                } else
 #endif /* OS2 */
 #endif /* IKSDONLY */
 		{
@@ -1025,7 +1025,7 @@ xpnbyte(a,tcs,fcs,fn) int a, tcs, fcs; int (*fn)();
                                    wherex[VCMD],
                                    &colorcmd
                                    );
-            } else 
+            } else
 #endif /* OS2 */
 #endif /* IKSDONLY */
             {
@@ -2019,7 +2019,7 @@ static int xlaptr = 0;
   Returns:
     >= 0: A translated byte suitable for writing.
     <  0: Fatal error (such as EOF on input source).
-  As of Sat Sep  7 18:37:41 2002:  
+  As of Sat Sep  7 18:37:41 2002:
     When the output character-set is UCS-2, bytes are ALWAYS returned in
     big-endian order (previously they could also be returned in LE order
     under certain conditions, which was just way too confusing).
@@ -2561,7 +2561,7 @@ xgnbyte(tcs,fcs,fn) int tcs, fcs, (*fn)();
 	return(-2);
     }
 #ifdef COMMENT
-/*    
+/*
   If there is a return() statement here, some compilers complain
   about "statement not reached".  If there is no return() statement,
   other compilers complain that "Non-void function should return a value".
@@ -3693,7 +3693,7 @@ Please confirm output file specification or supply an alternative:";
   We haven't yet received the A packet so we don't yet know it's e-mail,
   so in fact we go ahead and convert it anyway, but later we get the
   original back from ofilnam[].
-*/  
+*/
     dispos = 0;
     ckstrncpy(ofilnam,(char *)srvcmd,CKMAXPATH+1);
 
@@ -5633,7 +5633,7 @@ gnfile() {
     fullname[0] = NUL;
 
 #ifdef VMS
-    /* 
+    /*
       In VMS, zopeni() sets binary 0/1 automatically from the file
       attributes.  Don't undo it here.
     */

@@ -50,7 +50,7 @@ C-KERMIT UPDATE HISTORY
      * [25]Change logs for C-Kermit releases 1985-2011  (plain text)
      * [26]Announcements of older C-Kermit releases  (plain text)
 
-   Grüße aus Bronx  <- (pay no attention, this is to make sure that EMACS
+   Grï¿½ï¿½e aus Bronx  <- (pay no attention, this is to make sure that EMACS
    didn't mess up this page's UTF-8 encoding)
 
    This page, which as of May 2022 would be about 200 pages long if
@@ -138,7 +138,7 @@ C-Kermit>set speed ? Serial-port speed (bits per second), one of the following:
 
           6 October 2022:
 
-   ckutio.c changes from Pali Rohár to get at the higher serial speeds
+   ckutio.c changes from Pali Rohï¿½r to get at the higher serial speeds
           supported by newer UARTs.
 
           + ckutio.c ttsspd() was missing the new high-speed baud rates
@@ -749,7 +749,7 @@ C-Kermit 10.0 Beta.01 16 May 2022 and Beta.02 17 May 2022
     |> New features
 
      * Serial-port speed selections for 1000000, 2000000, 2500000,
-       3000000, 3500000, and 4000000 bps, suggested by Pali Rohár. The new
+       3000000, 3500000, and 4000000 bps, suggested by Pali Rohï¿½r. The new
        high speeds have not been tested because I no longer have a
        computer with serial port.
      * New VDIRECTORY command with 1-letter synonym V, a convenient alias
@@ -1536,7 +1536,7 @@ def MAXPATHLEN 1024
        doubled as it should be, but the next byte is skipped. Fixed in
        ckutio.c ttptycmd() about line 14998.
      * 30 Sep 2021:
-       From Sébastien Villemot; a printw() statement was changed to
+       From Sï¿½bastien Villemot; a printw() statement was changed to
        fputs() to avoid gcc -Wformat -Werror=format-security warning on
        Debian. ckuusx.c,
      * 8 May 2021:
@@ -1635,12 +1635,12 @@ ckvioc.c
 
     C-Kermit 9.0.305 Alpha.02 19 September 2020
 
-   From Sébastien Villemot (Debian): Remove clauses from the linux+krb5,
+   From Sï¿½bastien Villemot (Debian): Remove clauses from the linux+krb5,
    linux+ssl, and linux+krb5+ssl makefile targets that tested to see if an
    executable was actually created, because they violate Debian policy.
    makefile, 18 September 2020.
 
-   From Sébastien Villemot (Debian): Add another "else if" to the search
+   From Sï¿½bastien Villemot (Debian): Add another "else if" to the search
    for the Kerberos 5 com_err library for Multiarch systems. makefile, 18
    September 2020.
 
@@ -5240,7 +5240,7 @@ make: [solaris9g+openssl+shadow+pam+zlib] Error 2
    out the linuxnc (and linuxc) targets needed the same treatment as the
    Linux one for 64-bit Linuxes. makefile, 3 Mar 2009.
 
-   From Günter Knauf: 64-bit builds were failing on SuSE Linux because
+   From Gï¿½nter Knauf: 64-bit builds were failing on SuSE Linux because
    libresolv and libcrypt were in lib64 rather than lib; updated the tests
    in the linux makefile target to find them. makefile, 12 Jan 2009.
 

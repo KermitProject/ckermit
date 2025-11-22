@@ -2481,7 +2481,7 @@ iks_tn_sb(sb, n) CHAR * sb; int n;
 #ifdef CK_AUTODL
 #ifdef OS2
             if (local && (IsConnectMode() && autodl) ||
-                (!IsConnectMode() && 
+                (!IsConnectMode() &&
                   (inautodl || sstate == 'x' || sstate == 'v'))
                 )
               tn_siks(KERMIT_RESP_START); /* START */
@@ -3566,7 +3566,7 @@ tn_debug(s) char *s;
     }
     ReleaseVscrnMutex(VTERM) ;
 #else
-    if (what != W_CONNECT && what != W_DIALING && 
+    if (what != W_CONNECT && what != W_DIALING &&
         what != W_COMMAND && what != W_NOTHING)
       return;                           /* CONNECT/command must be active */
     conoll(s);
@@ -4702,7 +4702,7 @@ tn_xdoop(z, echo, fn) CHAR z; int echo; int (*fn)();
                   extern int authentication_version;
 
 #ifdef CK_SSL
-                  /* if we have an outstanding DO START_TLS then we must 
+                  /* if we have an outstanding DO START_TLS then we must
                    * wait for the response before we determine what to do
                    */
                   if (TELOPT_UNANSWERED_DO(TELOPT_START_TLS)) {

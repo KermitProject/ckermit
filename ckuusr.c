@@ -6269,7 +6269,7 @@ dodcl(cx) int cx;
 		      "]",
 		      NULL,NULL,NULL,NULL,NULL,NULL,NULL
 		      );
-	    
+
 	    rc = cmfld((char *)tmp,"",&s,xxstring); /* Get field */
 	    if (rc < 0) {		/* Error... */
 		if (rc == -3) {		/* Empty element */
@@ -8052,7 +8052,7 @@ redossh() {
 /*
   Like hmsga() in ckuus2.c but takes a single substitution parameter, s2,
   which replaces every occurrence of "%s" in the first argument.
-  Added to print text containing the copyright year, so the year doesn't 
+  Added to print text containing the copyright year, so the year doesn't
   have to be hardwired into lots of scattered text strings.
 */
 int                                     /* Print an array of lines, */
@@ -8168,7 +8168,7 @@ isinternalmacro(x) int x;
                         internal = 1;
                     }
                 }
-            } 
+            }
             debug(F101," internal macro","B",internal);
         }
     }
@@ -9375,7 +9375,7 @@ docmd(cx) int cx;
 		} else {
 		    printf("  Long name:  %s\n",line);
 		    printf("  Short name: %s\n",tmpbuf);
-		}            
+		}
 #endif /* NT */
 	    }
 	    return(success = ((int)strlen(pwp) > 0));
@@ -9712,7 +9712,7 @@ docmd(cx) int cx;
 		x = cmresult.nresult;
 #ifdef CKFLOAT
 		if (inscale != 1.0)	/* Scale */
-		  x *= inscale;		
+		  x *= inscale;
 #endif	/* CKFLOAT */
 		havetime++;
 		break;
@@ -9744,7 +9744,7 @@ docmd(cx) int cx;
 		    havetime++;
 		}
 		break;
-	      default:		
+	      default:
 		printf("?Internal error\n");
 		return(-9);
 	    }
@@ -10568,7 +10568,7 @@ docmd(cx) int cx;
 	return(0);
     }
     if (cx == XXTAK) {			/* TAKE */
-	char * scriptenv = NULL;	
+	char * scriptenv = NULL;
 #ifdef OS2
         char * GetAppData(int);
 	extern char startupdir[],exedir[],inidir[];
@@ -11257,7 +11257,7 @@ necessary DLLs did not load.  Use SHOW NETWORK to check network status.\n");
 		}
 	    }
 #endif /* NOSPL */
-#ifdef LOCUS		
+#ifdef LOCUS
 	    if (autolocus)
 		setlocus(1,1);
 #endif /* LOCUS */
@@ -11693,7 +11693,7 @@ necessary DLLs did not load.  Use SHOW NETWORK to check network status.\n");
 	      struct FDB df, sw;
 
               /*
-               * char * sshkey_default_file(int keytype) 
+               * char * sshkey_default_file(int keytype)
                * will provide the default filename for a given keytype
                * is it possible to have the default value for the 2nd
                * FDB set and changed when a /TYPE switch is provided?
@@ -12206,7 +12206,7 @@ necessary DLLs did not load.  Use SHOW NETWORK to check network status.\n");
 		}
 	    }
 #endif /* NOSPL */
-#ifdef LOCUS		
+#ifdef LOCUS
 	    if (autolocus)
 		setlocus(1,1);
 #endif /* LOCUS */
@@ -12499,7 +12499,7 @@ necessary DLLs did not load.  Use SHOW NETWORK to check network status.\n");
 		}
 	    }
 #endif /* NOSPL */
-#ifdef LOCUS		
+#ifdef LOCUS
 	    if (autolocus)
 		setlocus(1,1);
 #endif /* LOCUS */
@@ -12527,7 +12527,7 @@ necessary DLLs did not load.  Use SHOW NETWORK to check network status.\n");
 	  case SFTP_RMDIR:
 	  case SFTP_LINK:
 	  case SFTP_VER:
-	    if ((y = cmtxt("command parameters","",&s,xxstring)) < 0) 
+	    if ((y = cmtxt("command parameters","",&s,xxstring)) < 0)
 	      return(y);
 	    if (ssh_tchk() < 0 || !ssh_get_iparam(SSH_IPARAM_CAS)
             || strcmp(ssh_get_sparam(SSH_SPARAM_CMD), "sftp")) {
@@ -13970,16 +13970,16 @@ necessary DLLs did not load.  Use SHOW NETWORK to check network status.\n"
 	vars[2] = "exedir";    legend[2] = "K95 Program directory";
 	vars[3] = "inidir";    legend[3] = "K95 Initialization file directory";
 	vars[4] = "startup";   legend[4] = "Current directory when started";
-	
+
         vars[5] = "common";
         legend[5] = "K95 data for all users and K95SITE.INI file";
-	
+
         vars[6] = "personal";  legend[6] = "Your personal data directory tree";
         vars[7] = "desktop";   legend[7] = "Your deskop directory tree";
-	
+
         vars[8] = "appdata";
         legend[8] = "Your personal K95 data tree and K95CUSTOM.INI file";
-	
+
         vars[9] = "download";  legend[9] = "Your K95 download directory";
         vars[10] = "tmpdir";   legend[10] = "Your TEMP directory";
 	vars[11] = NULL;       legend[11] = NULL;

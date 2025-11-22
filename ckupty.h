@@ -190,4 +190,3 @@ extern struct error_table et_pty_error_table;
 
 #define __LIBPTY_H__
 #endif /* __LIBPTY_H__ */
-

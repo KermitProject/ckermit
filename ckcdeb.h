@@ -1661,7 +1661,7 @@ _PROTOTYP(int ckxfprintf,(FILE *, const char *, ...));
 #endif /* CK_POSIX_SIG */
 #endif /* QNX */
 
-/* 
+/*
   void type, normally available only in ANSI compilers.
   The HP-UX exception (for its "bundled" non-ANSI C compiler)
   is known to be valid back to HP-UX 6.5.
@@ -1800,11 +1800,19 @@ _PROTOTYP(int ckxfprintf,(FILE *, const char *, ...));
 #define SIGRETURN return(0)
 #endif /* SIGRETURN */
 
-#ifdef CKNTSIG
-/* This does not work, so don't use it. */
-#define signal ckntsignal
-SIGTYP (*ckntsignal(int type, SIGTYP (*)(int)))(int);
-#endif /* CKNTSIG */
+#ifdef CK_ANSIC
+#ifdef OS2
+#ifdef NT
+typedef SIGTYP (*sig_t)(int);
+#else /* !NT */
+typedef SIGTYP (volatile *sig_t)(int);
+#endif /* NT */
+#else /* !OS2 */
+typedef SIGTYP (*sig_t)(int);
+#endif /* OS2 */
+#else /* !CK_ANSIC */
+typedef SIGTYP (*sig_t)();
+#endif /* CK_ANSIC */
 
 /* We want all characters to be unsigned if the compiler supports it */
 
@@ -7180,7 +7188,7 @@ _PROTOTYP(int ck_auth_unloaddll, (VOID));
 #endif /* OS2 */
 
 #ifdef NT
-_PROTOTYP(DWORD ckGetLongPathname,(LPCSTR lpFileName, 
+_PROTOTYP(DWORD ckGetLongPathname,(LPCSTR lpFileName,
                                    LPSTR lpBuffer, DWORD cchBuffer));
 _PROTOTYP(DWORD ckGetShortPathName,(LPCSTR lpszLongPath,
                                     LPSTR lpszShortPath, DWORD cchBuffer));

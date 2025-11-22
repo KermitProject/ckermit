@@ -12,6 +12,7 @@
 # General rules
 
 *.o
+ckcpro.c
 wart
 wermit
 UNINSTALL

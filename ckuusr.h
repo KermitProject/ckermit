@@ -3111,11 +3111,11 @@ _PROTOTYP(int BuildFontTable,
           (struct keytab ** pTable, struct keytab ** pTable2, int * pN));
 #endif /* KUI */
 
-_PROTOTYP(int cx_net, (int net, int protocol, char * xhost, char * svc, 
+_PROTOTYP(int cx_net, (int net, int protocol, char * xhost, char * svc,
         char * username, char * password, char * command,
-        int param1, int param2, int param3, 
+        int param1, int param2, int param3,
         int cx, int sx, int flag, int gui));
-_PROTOTYP(int cx_serial, (char *device, 
+_PROTOTYP(int cx_serial, (char *device,
         int cx, int sx, int shr, int flag, int gui, int special));
 
 #endif /* CKUUSR_H */

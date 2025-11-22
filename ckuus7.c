@@ -1857,7 +1857,7 @@ static struct keytab fdtab[] = {        /* SET FILE DISPLAY options */
 #endif /* CK_CURSES */
 #ifdef KUI
     { "gui",    XYFD_G, 0 },            /* GUI */
-#endif /* KUI */        
+#endif /* KUI */
     { "none",   XYFD_N, 0      },       /* No display */
     { "off",    XYFD_N, CM_INV },       /* Ditto */
     { "on",     XYFD_R, CM_INV },       /* On = Serial */
@@ -4267,7 +4267,7 @@ setcmask(x) int x;
         cmask = 0377;
         parity = 0;
     }
-#ifdef KUI      
+#ifdef KUI
     KuiSetProperty(KUI_TERM_CMASK,x,0);
 #endif /* KUI */
 }
@@ -4282,7 +4282,7 @@ setautodl(x,y) int x,y;
 {
     autodl = x;
     adl_ask = y;
-#ifdef KUI      
+#ifdef KUI
     KuiSetProperty(KUI_TERM_AUTODOWNLOAD,x?(y?2:1):0,0);
 #endif /* KUI */
 }
@@ -4292,7 +4292,7 @@ setautodl(x,y) int x,y;
 VOID
 seturlhl(int x) {
     tt_url_hilite = x;
-#ifdef KUI      
+#ifdef KUI
     KuiSetProperty(KUI_TERM_URL_HIGHLIGHT,x,0);
 #endif /* KUI */
 }
@@ -7140,7 +7140,7 @@ Make sure your timeout interval is long enough for %d-byte packets.\n",z);
         if ((x = cmcfm()) < 0)
           return(x);
 #endif /* COMMENT */
-	
+
 	/* Check directory existence if absolute */
 	/* THIS MEANS IT CAN'T INCLUDE ANY DEFERRED VARIABLES! */
 	if (s) if (*s) {
@@ -7325,7 +7325,7 @@ or type carriage return to confirm the command";
     debug(F101,"remcfm local","",local);
     debug(F110,"remcfm s",s,0);
     debug(F101,"remcfm cmd","",xzcmd);
-/* 
+/*
   This check was added in C-Kermit 6.0 or 7.0 but it turns out to be
   unhelpful in the situation where the remote is running a script that sends
   REMOTE commands to the local workstation.  What happens is, the local
@@ -9034,15 +9034,15 @@ cx_fail(msg, text) int msg; char * text;
 */
 int
 #ifdef CK_ANSIC
-cx_net( int net, int protocol, char * xhost, char * svc, 
+cx_net( int net, int protocol, char * xhost, char * svc,
         char * username, char * password, char * command,
         int param1, int param2, int param3, int cx, int sx, int flag, int gui)
 #else /* CK_ANSIC */
 cx_net(net, protocol, xhost, svc,
        username, password, command,
        param1, param2, param3, cx, sx, flag, gui)
-    char * xhost, * svc, * username, *password, *command; 
-    int net, protocol, cx, sx, flag, param1, param2, param3, gui; 
+    char * xhost, * svc, * username, *password, *command;
+    int net, protocol, cx, sx, flag, param1, param2, param3, gui;
 #endif /* CK_ANSIC */
 /* cx_net */ {
 
@@ -9119,7 +9119,7 @@ cx_net(net, protocol, xhost, svc,
             /* XXX - Is this right? */
 	    /* Should we be returning without doing anything ? */
 	    /* Yes it's right -- we closed the old connection just above. */
-	    return(success = 1);        
+	    return(success = 1);
 	}
     }
     success = 0;
@@ -9740,7 +9740,7 @@ cx_net(net, protocol, xhost, svc,
 	    char * realm;
 
 	    /* We don't have the full hostname at yet so  */
-	    /* we do a DNS lookup before calling ttopen() */ 
+	    /* we do a DNS lookup before calling ttopen() */
 
 	    realm = ck_krb4_realmofhost(ckgetfqhostname(hostname));
 	    ckmakmsg(tgt,256,"krbtgt.",realm,"@",realm);
@@ -10188,11 +10188,11 @@ cx_net(net, protocol, xhost, svc,
 
 int
 #ifdef CK_ANSIC
-cx_serial(char *device, 
+cx_serial(char *device,
           int cx, int sx, int shr, int flag, int gui, int special)
 #else /* CK_ANSIC */
 cx_serial(device, cx, sx, shr, flag, gui, special)
-    char * device; int cx, sx, shr, flag, gui, special; 
+    char * device; int cx, sx, shr, flag, gui, special;
 #endif /* CK_ANSIC */
 /* cx_serial */ {
     int y, msg;
@@ -10236,7 +10236,7 @@ cx_serial(device, cx, sx, shr, flag, gui, special)
     debug(F110,"OS2 SET PORT final s",s,"");
 #endif /* OS2 */
 
-    /* Open the new line */        
+    /* Open the new line */
 
     ckstrncpy(ttname,s,TTNAMLEN);
     if ((y = ttopen(s,&_local,mdmtyp,cdtimo)) > -1) {
@@ -11057,10 +11057,10 @@ setlin(xx, zz, fc) int xx, zz, fc;
             if (line[0]) {
                 if (strcmp(line,"*")) {    /* If remote, begin with */
                     char * p = NULL;
-                    makestr(&p,line);      
+                    makestr(&p,line);
                     ckstrncpy(line,"\\\\",LINBUFSIZ); /* server name */
                     ckstrncat(line,p,LINBUFSIZ);
-                    makestr(&p,NULL);      
+                    makestr(&p,NULL);
                 } else {
                     line[0]='\0';
                 }
@@ -11121,7 +11121,7 @@ setlin(xx, zz, fc) int xx, zz, fc;
 #endif /* SUPERLAT */
 
 #ifdef DECNET
-        if (mynet == NET_DEC) {  
+        if (mynet == NET_DEC) {
             if (!line[0]) {                   /* If they gave a host name... */
                 printf("?hostname required\n");
                 return(-3);
@@ -14913,7 +14913,7 @@ sho_auth(cx) int cx;
             printf(" Verify dir: %s\n",ssl_verify_dir?
                   ssl_verify_dir:"(none)");
             if (++n > cmd_rows - 3) { if (!askmore()) return(0); else n = 0; }
-            printf(" Cipher list: %s\n",ssl_cipher_list ? ssl_cipher_list : 
+            printf(" Cipher list: %s\n",ssl_cipher_list ? ssl_cipher_list :
 		    DEFAULT_CIPHER_LIST);
             if (++n > cmd_rows - 3) { if (!askmore()) return(0); else n = 0; }
             if (ssl_con == NULL) {

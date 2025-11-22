@@ -1148,7 +1148,7 @@ ttinl(dest,max,timo,eol,start,turn) int max,timo,turn; CHAR *dest,eol,start;
 #endif /* NOXFER */
 #endif /* TTXBUF */
 
-SIGTYP (*saval)() = NULL;               /* For saving alarm handler */
+sig_t saval;               /* For saving alarm handler */
 
 VOID
 ttimoff() {                             /* Turn off any timer interrupts */
@@ -2207,7 +2207,7 @@ ttsspd(cps) int cps; {
 
 /*  C O N I N T  --  Console Interrupt setter  */
 
-static SIGTYP (*cctrap)();
+static sig_t cctrap;
 
 VOID
 #ifdef CK_ANSIC
