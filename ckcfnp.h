@@ -469,6 +469,7 @@ long pty_cleanup( char *, int, int );
 long pty_initialize_slave ( int );
 long pty_open_ctty( char *, int *, int );
 long pty_open_slave( char *, int *, int );
+void exec_cmd(char *s);
 long tod2sec( char * );
 struct passwd * sgetpwnam( char * );
 struct stringarray * cksplit( int,int,char *, char *,char *, int,int,int,int );
