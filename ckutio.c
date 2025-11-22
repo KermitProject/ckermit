@@ -2656,12 +2656,7 @@ debug(F110,"XXX netopen in ifdef NETCONN...","A",0);
 		    close(pipe0[1]);
 		    dup2(pipe1[0], 0);
 		    close(pipe1[0]);
-/*
-  I can't image what this is; system() executes a shell command.
-  ttname holds the name of terminal device, it's not a command.
-  --fdc Fri Sep 18 15:51:18 2020
-		    system(ttname);
-*/
+		    exec_cmd(ttname);   /* Command to run is in ttname as with NET_PTY */
 		    _exit(0);
 		  default:		/* Parent */
 		    close(pipe0[1]);
