@@ -6573,6 +6573,12 @@ linux gnu-linux:
 	    fi; \
 	  fi; \
 	fi; \
+	HAVE_LIBTINFO=''; \
+	if test -z '$$HAVE_LIBTINFO'; then \
+	  if ld -ltinfo > /dev/null 2> /dev/null; then \
+	    HAVE_LIBTINFO='-ltinfo'; \
+	  fi; \
+	fi; \
 	HAVE_RESOLV=''; \
 	if ld -lresolv > /dev/null 2> /dev/null; then \
 	  HAVE_RESOLV='-lresolv'; \
@@ -6607,7 +6613,7 @@ linux gnu-linux:
 	$(MAKE) KTARGET=$${KTARGET:-$(@)} \
 	"KFLAGS=$$HAVE_CURSES $$HAVE_PTMX $$HAVE_LOCKDEV $$HAVE_CRYPT_H \
 	$$HAVE_BAUDBOY $$HAVE_OPENPTY $$HAVE_LARGEFILES $(KFLAGS)" \
-	"LIBS=$(LIBS) $$LIB_UTIL \
+	"LIBS=$(LIBS) $$LIB_UTIL $$HAVE_LIBTINFO \
 	  $$HAVE_LIBCURSES $$HAVE_RESOLV $$HAVE_CRYPT $$HAVE_LOCKDEV" \
 	linuxa
 
