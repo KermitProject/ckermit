@@ -724,7 +724,7 @@ struct ck_p ptab[NPROTOS] = {           /* Initialize the Kermit part ... */
 #ifdef VMS                              /* Default filename collision action */
     XYFX_X,                             /* REPLACE for VAX/VMS */
 #else
-    XYFX_B,                             /* BACKUP for everybody else */
+    XYFX_D,                             /* REJECT for everybody else */
 #endif /* VMS */
 
 #ifdef OS2                              /* Flag for file name conversion */
@@ -1574,37 +1574,37 @@ char * remdest = NULL;
   only as initial (default) values.
 */
 int en_xit = 2;                         /* EXIT */
-int en_cwd = 3;                         /* CD/CWD */
-int en_cpy = 3;                         /* COPY   */
+int en_cwd = 2;                         /* CD/CWD */
+int en_cpy = 2;                         /* COPY   */
 int en_del = 2;                         /* DELETE */
-int en_mkd = 3;                         /* MKDIR */
+int en_mkd = 2;                         /* MKDIR */
 int en_rmd = 2;                         /* RMDIR */
-int en_dir = 3;                         /* DIRECTORY */
-int en_fin = 3;                         /* FINISH */
-int en_get = 3;                         /* GET */
+int en_dir = 2;                         /* DIRECTORY */
+int en_fin = 2;                         /* FINISH */
+int en_get = 2;                         /* GET */
 #ifndef NOPUSH
 int en_hos = 2;                         /* HOST enabled */
 #else
 int en_hos = 0;                         /* HOST disabled */
 #endif /* NOPUSH */
-int en_ren = 3;                         /* RENAME */
-int en_sen = 3;                         /* SEND */
-int en_set = 3;                         /* SET */
-int en_spa = 3;                         /* SPACE */
-int en_typ = 3;                         /* TYPE */
-int en_who = 3;                         /* WHO */
+int en_ren = 2;                         /* RENAME */
+int en_sen = 2;                         /* SEND */
+int en_set = 2;                         /* SET */
+int en_spa = 2;                         /* SPACE */
+int en_typ = 2;                         /* TYPE */
+int en_who = 2;                         /* WHO */
 #ifdef datageneral
 /* Data General AOS/VS can't do this */
 int en_bye = 0;                         /* BYE */
 #else
 int en_bye = 2;                         /* PCs in local mode... */
 #endif /* datageneral */
-int en_asg = 3;                         /* ASSIGN */
-int en_que = 3;                         /* QUERY */
+int en_asg = 2;                         /* ASSIGN */
+int en_que = 2;                         /* QUERY */
 int en_ret = 2;                         /* RETRIEVE */
-int en_mai = 3;                         /* MAIL */
-int en_pri = 3;                         /* PRINT */
-int en_ena = 3;                         /* ENABLE */
+int en_mai = 2;                         /* MAIL */
+int en_pri = 2;                         /* PRINT */
+int en_ena = 2;                         /* ENABLE */
 #else
 int en_xit = 0, en_cwd = 0, en_cpy = 0, en_del = 0, en_mkd = 0, en_rmd = 0,
     en_dir = 0, en_fin = 0, en_get = 0, en_hos = 0, en_ren = 0, en_sen = 0,
